@@ -12,8 +12,6 @@ RUN npm install
 # Copy the rest of the application code
 COPY . .
 
-# Generate Prisma Client
-RUN npx prisma generate
 
 # Build the Next.js application
 RUN npm run build
@@ -32,9 +30,6 @@ COPY package*.json ./
 # Install only production dependencies
 RUN npm ci --only=production
 
-# Copy Prisma schema and generate client
-COPY prisma ./prisma
-RUN npx prisma generate
 
 # Copy built application from builder stage
 COPY --from=builder /app/.next ./.next
