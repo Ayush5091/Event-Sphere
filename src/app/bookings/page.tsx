@@ -10,6 +10,9 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { supabaseAdmin } from "@/lib/supabase";
+import { SignOutButton } from "@/components/SignOutButton";
+import { createClient } from "@/lib/supabase/server";
+
 
 function formatDate(dateStr: string) {
     const d = new Date(dateStr);
@@ -32,11 +35,16 @@ function getCat(category: string | null) {
 }
 
 export default async function BookingsPage() {
-    // In a real app, you'd filter by the logged-in user's email.
-    // For now, show all registrations as a demo.
+    const supabaseClient = await createClient();
+    const { data: { user } } = await supabaseClient.auth.getUser();
+    const userName = user?.user_metadata?.full_name || user?.email?.split("@")[0] || "Student";
+    const userEmail = user?.email || "";
+
+    // Fetch the logged-in user's registrations.
     const { data: registrations } = await supabaseAdmin
         .from("Registration")
         .select(`*, Event ( title, date, location, category, status )`)
+        .eq("user_id", user?.id)
         .order("createdAt", { ascending: false });
 
     const allBookings = registrations || [];
@@ -81,15 +89,7 @@ export default async function BookingsPage() {
                     </nav>
                 </div>
                 <div className="p-3 group-hover/sidebar:p-6 transition-all duration-300">
-                    <div className="flex items-center gap-3 p-2 group-hover/sidebar:p-3 rounded-2xl hover:bg-white/5 transition-all duration-300 cursor-pointer border border-transparent hover:border-white/10">
-                        <Avatar className="h-10 w-10 min-w-[2.5rem] ring-2 ring-purple-500/30 shadow-md shadow-purple-500/20">
-                            <AvatarFallback className="bg-purple-900/50 text-purple-300 font-bold">S</AvatarFallback>
-                        </Avatar>
-                        <div className="flex-1 min-w-0 opacity-0 group-hover/sidebar:opacity-100 transition-opacity duration-300 delay-100">
-                            <p className="text-sm font-bold text-white truncate">Student</p>
-                            <p className="text-xs text-muted-foreground truncate">student@sahyadri.edu.in</p>
-                        </div>
-                    </div>
+                    <SignOutButton userName={userName} userEmail={userEmail} variant="student" />
                 </div>
             </aside>
 

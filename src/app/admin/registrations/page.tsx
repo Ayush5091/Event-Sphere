@@ -18,6 +18,8 @@ import {
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
 import { supabaseAdmin } from "@/lib/supabase";
+import { SignOutButton } from "@/components/SignOutButton";
+import { createClient } from "@/lib/supabase/server";
 
 function getInitials(name: string): string {
     return name.split(" ").map((n) => n[0]).join("").toUpperCase().slice(0, 2);
@@ -50,6 +52,11 @@ const rowAccents = [
 ];
 
 export default async function RegistrationsPage() {
+    const supabaseClient = await createClient();
+    const { data: { user } } = await supabaseClient.auth.getUser();
+    const userName = user?.user_metadata?.full_name || user?.email?.split("@")[0] || "Admin";
+    const userEmail = user?.email || "";
+
     const { data: registrations } = await supabaseAdmin
         .from("Registration")
         .select(`*, Event ( title, date )`)
@@ -92,15 +99,7 @@ export default async function RegistrationsPage() {
                     </nav>
                 </div>
                 <div className="p-3 group-hover/sidebar:p-6 transition-all duration-300">
-                    <div className="flex items-center gap-3 p-2 group-hover/sidebar:p-3 rounded-2xl hover:bg-white/5 transition-all duration-300 cursor-pointer border border-transparent hover:border-white/10">
-                        <Avatar className="h-10 w-10 min-w-[2.5rem] ring-2 ring-indigo-500/30 shadow-md shadow-indigo-500/20">
-                            <AvatarFallback className="bg-indigo-900/50 text-indigo-300 font-bold">A</AvatarFallback>
-                        </Avatar>
-                        <div className="flex-1 min-w-0 opacity-0 group-hover/sidebar:opacity-100 transition-opacity duration-300 delay-100">
-                            <p className="text-sm font-bold text-white truncate">Campus Admin</p>
-                            <p className="text-xs text-muted-foreground truncate">admin@college.edu</p>
-                        </div>
-                    </div>
+                    <SignOutButton userName={userName} userEmail={userEmail} variant="admin" />
                 </div>
             </aside>
 

@@ -10,6 +10,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { SignOutButton } from "@/components/SignOutButton";
+import { createClient } from "@/lib/supabase/server";
 import { supabaseAdmin } from "@/lib/supabase";
 
 function formatDate(dateStr: string) {
@@ -34,10 +36,16 @@ function getCat(category: string | null) {
 }
 
 export default async function StudentDashboard() {
-    // Fetch all registrations (acting as the student's joined events)
+    const supabaseClient = await createClient();
+    const { data: { user } } = await supabaseClient.auth.getUser();
+    const userName = user?.user_metadata?.full_name || user?.email?.split("@")[0] || "Student";
+    const userEmail = user?.email || "";
+
+    // Fetch the logged-in user's registrations
     const { data: registrations } = await supabaseAdmin
         .from("Registration")
         .select(`*, Event (*)`)
+        .eq("user_id", user?.id)
         .order("createdAt", { ascending: false });
 
     const myBookings = registrations || [];
@@ -119,7 +127,7 @@ export default async function StudentDashboard() {
                     {/* Header */}
                     <FadeIn direction="down">
                         <header className="mb-8">
-                            <h1 className="text-3xl font-extrabold text-white mb-2 tracking-tight">Welcome Back! 👋</h1>
+                            <h1 className="text-3xl font-extrabold text-white mb-2 tracking-tight">Welcome Back, {userName.split(" ")[0]}! 👋</h1>
                             <p className="text-muted-foreground font-medium text-sm">Here&apos;s your event activity at a glance.</p>
                         </header>
                     </FadeIn>

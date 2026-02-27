@@ -34,9 +34,6 @@ export function BookEventModal({ eventId, eventTitle, children }: BookEventModal
         const form = new FormData(e.currentTarget);
         const body = {
             eventId,
-            studentName: form.get("studentName") as string,
-            studentEmail: form.get("studentEmail") as string,
-            studentId: form.get("studentId") as string,
         };
 
         try {
@@ -83,22 +80,11 @@ export function BookEventModal({ eventId, eventTitle, children }: BookEventModal
                     </div>
                 ) : (
                     <form onSubmit={handleSubmit} className="space-y-4 mt-2">
-                        <div className="bg-white/5 rounded-xl p-3 border border-white/10">
+                        <div className="bg-white/5 rounded-xl p-3 border border-white/10 mb-4">
                             <p className="text-xs text-muted-foreground font-semibold uppercase tracking-wider mb-1">Event</p>
                             <p className="text-white font-bold">{eventTitle}</p>
                         </div>
-                        <div className="space-y-2">
-                            <Label htmlFor="studentName" className="text-sm font-semibold text-slate-300">Full Name</Label>
-                            <Input id="studentName" name="studentName" required placeholder="e.g. John Doe" className="bg-white/5 border-white/10 text-white placeholder:text-muted-foreground focus-visible:ring-indigo-500" />
-                        </div>
-                        <div className="space-y-2">
-                            <Label htmlFor="studentEmail" className="text-sm font-semibold text-slate-300">Email</Label>
-                            <Input id="studentEmail" name="studentEmail" type="email" required placeholder="e.g. john.cs24@sahyadri.edu.in" className="bg-white/5 border-white/10 text-white placeholder:text-muted-foreground focus-visible:ring-indigo-500" />
-                        </div>
-                        <div className="space-y-2">
-                            <Label htmlFor="studentId" className="text-sm font-semibold text-slate-300">Student ID</Label>
-                            <Input id="studentId" name="studentId" required placeholder="e.g. CS2024001" className="bg-white/5 border-white/10 text-white placeholder:text-muted-foreground focus-visible:ring-indigo-500" />
-                        </div>
+                        <p className="text-sm text-slate-300">Your registration will be automatically linked to your authenticated profile.</p>
                         {error && (
                             <p className="text-red-400 text-sm font-medium bg-red-500/10 border border-red-500/20 rounded-lg px-3 py-2">{error}</p>
                         )}

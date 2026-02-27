@@ -1,17 +1,31 @@
 import { NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase';
+import { createClient } from '@/lib/supabase/server';
 
 export async function POST(request: Request) {
   try {
-    const body = await request.json();
-    const { eventId, studentName, studentEmail, studentId } = body;
+    const supabaseClient = await createClient();
+    const { data: { user } } = await supabaseClient.auth.getUser();
 
-    if (!eventId || !studentName || !studentEmail || !studentId) {
+    const body = await request.json();
+    const { eventId } = body;
+
+    if (!eventId) {
       return NextResponse.json(
-        { success: false, message: 'Please provide all required fields' },
+        { success: false, message: 'Please provide eventId' },
         { status: 400 }
       );
     }
+
+    if (!user) {
+      return NextResponse.json({ success: false, message: 'Unauthorized' }, { status: 401 });
+    }
+
+    // Fetch user profile to get full_name and department as studentId
+    const { data: profile } = await supabaseClient.from('User').select('*').eq('id', user.id).single();
+    const studentName = profile?.full_name || user.email?.split('@')[0] || 'Unknown';
+    const studentEmail = user.email || 'Unknown';
+    const studentId = profile?.department || 'N/A';
 
     // Check if event exists and get capacity
     const { data: event, error: eventError } = await supabase
@@ -19,7 +33,7 @@ export async function POST(request: Request) {
       .select('capacity')
       .eq('id', eventId)
       .single();
-    
+
     if (eventError || !event) {
       return NextResponse.json(
         { success: false, message: 'Event not found' },
@@ -46,7 +60,13 @@ export async function POST(request: Request) {
     const { data: registration, error: insertError } = await supabase
       .from('Registration')
       .insert([
-        { eventId, studentName, studentEmail, studentId }
+        {
+          eventId,
+          studentName,
+          studentEmail,
+          studentId,
+          ...(user ? { user_id: user.id } : {})
+        }
       ])
       .select()
       .single();

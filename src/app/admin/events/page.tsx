@@ -10,6 +10,9 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { SignOutButton } from "@/components/SignOutButton";
+import { createClient } from "@/lib/supabase/server";
 import {
     Table,
     TableBody,
@@ -18,7 +21,6 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
 import { supabaseAdmin } from "@/lib/supabase";
 
@@ -45,6 +47,11 @@ const categoryColors: Record<string, string> = {
 };
 
 export default async function ManageEventsPage() {
+    const supabaseClient = await createClient();
+    const { data: { user } } = await supabaseClient.auth.getUser();
+    const userName = user?.user_metadata?.full_name || user?.email?.split("@")[0] || "Admin";
+    const userEmail = user?.email || "";
+
     const { data: events } = await supabaseAdmin
         .from("Event")
         .select("*")
@@ -98,15 +105,7 @@ export default async function ManageEventsPage() {
                     </nav>
                 </div>
                 <div className="p-3 group-hover/sidebar:p-6 transition-all duration-300">
-                    <div className="flex items-center gap-3 p-2 group-hover/sidebar:p-3 rounded-2xl hover:bg-white/5 transition-all duration-300 cursor-pointer border border-transparent hover:border-white/10">
-                        <Avatar className="h-10 w-10 min-w-[2.5rem] ring-2 ring-indigo-500/30 shadow-md shadow-indigo-500/20">
-                            <AvatarFallback className="bg-indigo-900/50 text-indigo-300 font-bold">A</AvatarFallback>
-                        </Avatar>
-                        <div className="flex-1 min-w-0 opacity-0 group-hover/sidebar:opacity-100 transition-opacity duration-300 delay-100">
-                            <p className="text-sm font-bold text-white truncate">Campus Admin</p>
-                            <p className="text-xs text-muted-foreground truncate">admin@college.edu</p>
-                        </div>
-                    </div>
+                    <SignOutButton userName={userName} userEmail={userEmail} variant="admin" />
                 </div>
             </aside>
 
