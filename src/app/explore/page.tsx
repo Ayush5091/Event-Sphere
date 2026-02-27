@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
-import { supabase } from "@/lib/supabase";
+import { supabaseAdmin } from "@/lib/supabase";
 
 // Category → icon & color mapping
 const categoryStyles: Record<string, { icon: string; color: string; bg: string; border: string }> = {
@@ -46,7 +46,7 @@ interface Event {
 
 export default async function ExplorePage() {
     // Fetch events from Supabase
-    const { data: events, error } = await supabase
+    const { data: events, error } = await supabaseAdmin
         .from("Event")
         .select("*")
         .order("date", { ascending: true });
@@ -55,7 +55,7 @@ export default async function ExplorePage() {
     const eventsWithCounts: Event[] = [];
     if (events) {
         for (const event of events) {
-            const { count } = await supabase
+            const { count } = await supabaseAdmin
                 .from("Registration")
                 .select("id", { count: "exact", head: true })
                 .eq("eventId", event.id);

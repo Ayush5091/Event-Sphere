@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { supabase } from '@/lib/supabase';
+import { supabaseAdmin } from '@/lib/supabase';
 
 // POST /api/seed — Inserts sample events and registrations
 // Only use this in development to populate the database!
@@ -64,7 +64,7 @@ export async function POST() {
             },
         ];
 
-        const { data: insertedEvents, error: eventError } = await supabase
+        const { data: insertedEvents, error: eventError } = await supabaseAdmin
             .from('Event')
             .insert(events)
             .select();
@@ -125,7 +125,7 @@ export async function POST() {
                 },
             ];
 
-            const { error: regError } = await supabase
+            const { error: regError } = await supabaseAdmin
                 .from('Registration')
                 .insert(registrations);
 
