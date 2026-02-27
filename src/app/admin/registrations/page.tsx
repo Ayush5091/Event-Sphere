@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { FadeIn, PageTransition } from "@/components/ui/motion";
 import {
     Card,
     CardContent,
@@ -105,121 +106,129 @@ export default async function RegistrationsPage() {
 
             {/* Main Content */}
             <main className="flex-1 h-full overflow-y-auto overflow-x-hidden relative p-8 z-10">
-                <header className="flex justify-between items-center mb-8">
-                    <div>
-                        <h1 className="text-3xl font-extrabold text-white mb-2 tracking-tight">Registrations</h1>
-                        <p className="text-muted-foreground font-medium text-sm">View and manage all student registrations across events.</p>
-                    </div>
-                    <div className="relative group w-64">
-                        <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground group-focus-within:text-indigo-400 transition-colors text-[20px]">search</span>
-                        <Input className="pl-10 pr-4 py-2 bg-card/50 backdrop-blur-md border-white/10 rounded-xl focus-visible:ring-indigo-500 focus-visible:ring-offset-0 text-white placeholder:text-muted-foreground" placeholder="Search registrations..." />
-                    </div>
-                </header>
+                <PageTransition>
+                    <FadeIn direction="down">
+                        <header className="flex justify-between items-center mb-8">
+                            <div>
+                                <h1 className="text-3xl font-extrabold text-white mb-2 tracking-tight">Registrations</h1>
+                                <p className="text-muted-foreground font-medium text-sm">View and manage all student registrations across events.</p>
+                            </div>
+                            <div className="relative group w-64">
+                                <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground group-focus-within:text-indigo-400 transition-colors text-[20px]">search</span>
+                                <Input className="pl-10 pr-4 py-2 bg-card/50 backdrop-blur-md border-white/10 rounded-xl focus-visible:ring-indigo-500 focus-visible:ring-offset-0 text-white placeholder:text-muted-foreground" placeholder="Search registrations..." />
+                            </div>
+                        </header>
+                    </FadeIn>
 
-                {/* Stats */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                    <Card className="bg-card/50 backdrop-blur-2xl border-white/[0.06] shadow-xl ring-1 ring-white/[0.04] hover:-translate-y-1 transition-all duration-500">
-                        <CardContent className="p-6 flex items-center gap-4">
-                            <div className="p-3 bg-indigo-500/15 rounded-xl border border-indigo-500/25 text-indigo-400">
-                                <span className="material-symbols-outlined text-[24px]">how_to_reg</span>
-                            </div>
-                            <div>
-                                <p className="text-muted-foreground text-xs font-semibold uppercase tracking-wider">Total</p>
-                                <h3 className="text-2xl font-extrabold text-white">{totalCount}</h3>
-                            </div>
-                        </CardContent>
-                    </Card>
-                    <Card className="bg-card/50 backdrop-blur-2xl border-white/[0.06] shadow-xl ring-1 ring-white/[0.04] hover:-translate-y-1 transition-all duration-500">
-                        <CardContent className="p-6 flex items-center gap-4">
-                            <div className="p-3 bg-emerald-500/15 rounded-xl border border-emerald-500/25 text-emerald-400">
-                                <span className="material-symbols-outlined text-[24px]">check_circle</span>
-                            </div>
-                            <div>
-                                <p className="text-muted-foreground text-xs font-semibold uppercase tracking-wider">Registered</p>
-                                <h3 className="text-2xl font-extrabold text-white">{registeredCount}</h3>
-                            </div>
-                        </CardContent>
-                    </Card>
-                    <Card className="bg-card/50 backdrop-blur-2xl border-white/[0.06] shadow-xl ring-1 ring-white/[0.04] hover:-translate-y-1 transition-all duration-500">
-                        <CardContent className="p-6 flex items-center gap-4">
-                            <div className="p-3 bg-purple-500/15 rounded-xl border border-purple-500/25 text-purple-400">
-                                <span className="material-symbols-outlined text-[24px]">co_present</span>
-                            </div>
-                            <div>
-                                <p className="text-muted-foreground text-xs font-semibold uppercase tracking-wider">Attended</p>
-                                <h3 className="text-2xl font-extrabold text-white">{attendedCount}</h3>
-                            </div>
-                        </CardContent>
-                    </Card>
-                </div>
+                    {/* Stats */}
+                    <FadeIn direction="up" delay={0.1}>
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                            <Card className="bg-card/50 backdrop-blur-2xl border-white/[0.06] shadow-xl ring-1 ring-white/[0.04] hover:-translate-y-1 transition-all duration-500">
+                                <CardContent className="p-6 flex items-center gap-4">
+                                    <div className="p-3 bg-indigo-500/15 rounded-xl border border-indigo-500/25 text-indigo-400">
+                                        <span className="material-symbols-outlined text-[24px]">how_to_reg</span>
+                                    </div>
+                                    <div>
+                                        <p className="text-muted-foreground text-xs font-semibold uppercase tracking-wider">Total</p>
+                                        <h3 className="text-2xl font-extrabold text-white">{totalCount}</h3>
+                                    </div>
+                                </CardContent>
+                            </Card>
+                            <Card className="bg-card/50 backdrop-blur-2xl border-white/[0.06] shadow-xl ring-1 ring-white/[0.04] hover:-translate-y-1 transition-all duration-500">
+                                <CardContent className="p-6 flex items-center gap-4">
+                                    <div className="p-3 bg-emerald-500/15 rounded-xl border border-emerald-500/25 text-emerald-400">
+                                        <span className="material-symbols-outlined text-[24px]">check_circle</span>
+                                    </div>
+                                    <div>
+                                        <p className="text-muted-foreground text-xs font-semibold uppercase tracking-wider">Registered</p>
+                                        <h3 className="text-2xl font-extrabold text-white">{registeredCount}</h3>
+                                    </div>
+                                </CardContent>
+                            </Card>
+                            <Card className="bg-card/50 backdrop-blur-2xl border-white/[0.06] shadow-xl ring-1 ring-white/[0.04] hover:-translate-y-1 transition-all duration-500">
+                                <CardContent className="p-6 flex items-center gap-4">
+                                    <div className="p-3 bg-purple-500/15 rounded-xl border border-purple-500/25 text-purple-400">
+                                        <span className="material-symbols-outlined text-[24px]">co_present</span>
+                                    </div>
+                                    <div>
+                                        <p className="text-muted-foreground text-xs font-semibold uppercase tracking-wider">Attended</p>
+                                        <h3 className="text-2xl font-extrabold text-white">{attendedCount}</h3>
+                                    </div>
+                                </CardContent>
+                            </Card>
+                        </div>
+                    </FadeIn>
 
-                {/* Registrations Table */}
-                <Card className="bg-card/50 backdrop-blur-2xl border-white/[0.06] shadow-2xl shadow-black/20 overflow-hidden ring-1 ring-white/[0.04]">
-                    <CardHeader className="bg-white/[0.03] border-b border-white/[0.06] px-6 py-5">
-                        <CardTitle className="text-lg text-white flex items-center gap-3">
-                            <div className="p-2 bg-indigo-500/20 rounded-xl text-indigo-400 border border-indigo-500/25 shadow-md shadow-indigo-500/10">
-                                <span className="material-symbols-outlined text-[20px]">group</span>
-                            </div>
-                            All Registrations
-                        </CardTitle>
-                    </CardHeader>
-                    <CardContent className="p-0">
-                        {allRegistrations.length === 0 ? (
-                            <div className="flex flex-col items-center justify-center py-16 text-center">
-                                <span className="material-symbols-outlined text-[48px] text-muted-foreground/50 mb-4">person_off</span>
-                                <p className="text-muted-foreground font-semibold text-lg mb-1">No registrations yet</p>
-                                <p className="text-muted-foreground/70 text-sm">Registrations will appear here once students sign up.</p>
-                            </div>
-                        ) : (
-                            <Table>
-                                <TableHeader>
-                                    <TableRow className="border-white/[0.06] hover:bg-transparent">
-                                        <TableHead className="font-bold text-muted-foreground uppercase tracking-wider text-xs py-4">Student</TableHead>
-                                        <TableHead className="font-bold text-muted-foreground uppercase tracking-wider text-xs py-4">Email</TableHead>
-                                        <TableHead className="font-bold text-muted-foreground uppercase tracking-wider text-xs py-4">Department</TableHead>
-                                        <TableHead className="font-bold text-muted-foreground uppercase tracking-wider text-xs py-4">Event</TableHead>
-                                        <TableHead className="font-bold text-muted-foreground uppercase tracking-wider text-xs py-4">Status</TableHead>
-                                        <TableHead className="font-bold text-muted-foreground uppercase tracking-wider text-xs py-4 text-right">Registered</TableHead>
-                                    </TableRow>
-                                </TableHeader>
-                                <TableBody>
-                                    {allRegistrations.map((reg: Record<string, unknown>, i: number) => {
-                                        const accent = rowAccents[i % rowAccents.length];
-                                        const name = reg.studentName as string;
-                                        const email = reg.studentEmail as string;
-                                        const eventData = reg.Event as Record<string, string> | null;
-                                        const eventTitle = eventData?.title || "Unknown Event";
-                                        const status = reg.status as string;
-                                        const createdAt = reg.createdAt as string;
-                                        return (
-                                            <TableRow key={reg.id as string} className={`border-white/[0.06] ${accent.rowHover} transition-all duration-300 cursor-pointer group`}>
-                                                <TableCell className="py-4 font-bold text-white">
-                                                    <div className="flex items-center gap-3">
-                                                        <Avatar className={`h-9 w-9 ring-2 ring-white/[0.06] group-hover:${accent.ring} transition-all duration-300`}>
-                                                            <AvatarFallback className={`${accent.bg} ${accent.avatarText} text-xs font-bold`}>{getInitials(name)}</AvatarFallback>
-                                                        </Avatar>
-                                                        {name}
-                                                    </div>
-                                                </TableCell>
-                                                <TableCell className="py-4 text-slate-400 text-sm">{email}</TableCell>
-                                                <TableCell className="py-4">
-                                                    <Badge variant="outline" className="bg-white/5 border-white/10 text-slate-300 font-bold shadow-sm">{getDept(email)}</Badge>
-                                                </TableCell>
-                                                <TableCell className="py-4 text-slate-300 font-medium">{eventTitle}</TableCell>
-                                                <TableCell className="py-4">
-                                                    <Badge variant="outline" className={`font-bold text-xs border ${status === "ATTENDED" ? "bg-emerald-500/20 text-emerald-400 border-emerald-500/20" : "bg-indigo-500/20 text-indigo-400 border-indigo-500/20"}`}>
-                                                        {status}
-                                                    </Badge>
-                                                </TableCell>
-                                                <TableCell className="py-4 text-right text-muted-foreground">{timeAgo(createdAt)}</TableCell>
+                    {/* Registrations Table */}
+                    <FadeIn direction="up" delay={0.2}>
+                        <Card className="bg-card/50 backdrop-blur-2xl border-white/[0.06] shadow-2xl shadow-black/20 overflow-hidden ring-1 ring-white/[0.04]">
+                            <CardHeader className="bg-white/[0.03] border-b border-white/[0.06] px-6 py-5">
+                                <CardTitle className="text-lg text-white flex items-center gap-3">
+                                    <div className="p-2 bg-indigo-500/20 rounded-xl text-indigo-400 border border-indigo-500/25 shadow-md shadow-indigo-500/10">
+                                        <span className="material-symbols-outlined text-[20px]">group</span>
+                                    </div>
+                                    All Registrations
+                                </CardTitle>
+                            </CardHeader>
+                            <CardContent className="p-0">
+                                {allRegistrations.length === 0 ? (
+                                    <div className="flex flex-col items-center justify-center py-16 text-center">
+                                        <span className="material-symbols-outlined text-[48px] text-muted-foreground/50 mb-4">person_off</span>
+                                        <p className="text-muted-foreground font-semibold text-lg mb-1">No registrations yet</p>
+                                        <p className="text-muted-foreground/70 text-sm">Registrations will appear here once students sign up.</p>
+                                    </div>
+                                ) : (
+                                    <Table>
+                                        <TableHeader>
+                                            <TableRow className="border-white/[0.06] hover:bg-transparent">
+                                                <TableHead className="font-bold text-muted-foreground uppercase tracking-wider text-xs py-4">Student</TableHead>
+                                                <TableHead className="font-bold text-muted-foreground uppercase tracking-wider text-xs py-4">Email</TableHead>
+                                                <TableHead className="font-bold text-muted-foreground uppercase tracking-wider text-xs py-4">Department</TableHead>
+                                                <TableHead className="font-bold text-muted-foreground uppercase tracking-wider text-xs py-4">Event</TableHead>
+                                                <TableHead className="font-bold text-muted-foreground uppercase tracking-wider text-xs py-4">Status</TableHead>
+                                                <TableHead className="font-bold text-muted-foreground uppercase tracking-wider text-xs py-4 text-right">Registered</TableHead>
                                             </TableRow>
-                                        );
-                                    })}
-                                </TableBody>
-                            </Table>
-                        )}
-                    </CardContent>
-                </Card>
+                                        </TableHeader>
+                                        <TableBody>
+                                            {allRegistrations.map((reg: Record<string, unknown>, i: number) => {
+                                                const accent = rowAccents[i % rowAccents.length];
+                                                const name = reg.studentName as string;
+                                                const email = reg.studentEmail as string;
+                                                const eventData = reg.Event as Record<string, string> | null;
+                                                const eventTitle = eventData?.title || "Unknown Event";
+                                                const status = reg.status as string;
+                                                const createdAt = reg.createdAt as string;
+                                                return (
+                                                    <TableRow key={reg.id as string} className={`border-white/[0.06] ${accent.rowHover} transition-all duration-300 cursor-pointer group`}>
+                                                        <TableCell className="py-4 font-bold text-white">
+                                                            <div className="flex items-center gap-3">
+                                                                <Avatar className={`h-9 w-9 ring-2 ring-white/[0.06] group-hover:${accent.ring} transition-all duration-300`}>
+                                                                    <AvatarFallback className={`${accent.bg} ${accent.avatarText} text-xs font-bold`}>{getInitials(name)}</AvatarFallback>
+                                                                </Avatar>
+                                                                {name}
+                                                            </div>
+                                                        </TableCell>
+                                                        <TableCell className="py-4 text-slate-400 text-sm">{email}</TableCell>
+                                                        <TableCell className="py-4">
+                                                            <Badge variant="outline" className="bg-white/5 border-white/10 text-slate-300 font-bold shadow-sm">{getDept(email)}</Badge>
+                                                        </TableCell>
+                                                        <TableCell className="py-4 text-slate-300 font-medium">{eventTitle}</TableCell>
+                                                        <TableCell className="py-4">
+                                                            <Badge variant="outline" className={`font-bold text-xs border ${status === "ATTENDED" ? "bg-emerald-500/20 text-emerald-400 border-emerald-500/20" : "bg-indigo-500/20 text-indigo-400 border-indigo-500/20"}`}>
+                                                                {status}
+                                                            </Badge>
+                                                        </TableCell>
+                                                        <TableCell className="py-4 text-right text-muted-foreground">{timeAgo(createdAt)}</TableCell>
+                                                    </TableRow>
+                                                );
+                                            })}
+                                        </TableBody>
+                                    </Table>
+                                )}
+                            </CardContent>
+                        </Card>
+                    </FadeIn>
+                </PageTransition>
             </main>
         </div>
     );

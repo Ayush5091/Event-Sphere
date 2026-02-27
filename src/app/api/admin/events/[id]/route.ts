@@ -8,14 +8,17 @@ export async function PUT(
   try {
     const resolvedParams = await params;
     const body = await request.json();
-    
-    const updates: any = {};
+
+    const updates: Record<string, unknown> = {};
 
     if (body.title) updates.title = body.title;
     if (body.description) updates.description = body.description;
     if (body.date) updates.date = new Date(body.date).toISOString();
     if (body.location) updates.location = body.location;
     if (body.capacity) updates.capacity = parseInt(body.capacity, 10);
+    if (body.status) updates.status = body.status;
+    if (body.category) updates.category = body.category;
+    if (body.organizer) updates.organizer = body.organizer;
 
     if (Object.keys(updates).length === 0) {
       return NextResponse.json({ success: false, message: 'No fields to update' }, { status: 400 });
@@ -41,8 +44,33 @@ export async function PUT(
     }
 
     return NextResponse.json({ success: true, data });
-  } catch (error: any) {
-    console.error(`[Error]: ${error.message}`);
+  } catch (error: unknown) {
+    const msg = error instanceof Error ? error.message : 'Unknown error';
+    console.error(`[Error]: ${msg}`);
+    return NextResponse.json(
+      { success: false, message: 'Internal Server Error' },
+      { status: 500 }
+    );
+  }
+}
+
+export async function DELETE(
+  request: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  try {
+    const resolvedParams = await params;
+    const { error } = await supabase
+      .from('Event')
+      .delete()
+      .eq('id', resolvedParams.id);
+
+    if (error) throw error;
+
+    return NextResponse.json({ success: true });
+  } catch (error: unknown) {
+    const msg = error instanceof Error ? error.message : 'Unknown error';
+    console.error(`[Error]: ${msg}`);
     return NextResponse.json(
       { success: false, message: 'Internal Server Error' },
       { status: 500 }

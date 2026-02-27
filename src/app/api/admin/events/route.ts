@@ -4,9 +4,9 @@ import { supabase } from '@/lib/supabase';
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { title, description, date, location, capacity } = body;
+    const { title, description, date, location, capacity, category, organizer } = body;
 
-    if (!title || !description || !date || !location || !capacity) {
+    if (!title || !description || !date || !location || !capacity || !organizer) {
       return NextResponse.json(
         { success: false, message: 'Please provide all required fields' },
         { status: 400 }
@@ -16,12 +16,15 @@ export async function POST(request: Request) {
     const { data, error } = await supabase
       .from('Event')
       .insert([
-        { 
-          title, 
-          description, 
-          date: new Date(date).toISOString(), 
-          location, 
-          capacity: parseInt(capacity, 10) 
+        {
+          title,
+          description,
+          date: new Date(date).toISOString(),
+          location,
+          capacity: parseInt(capacity, 10),
+          category: category || 'Technical',
+          organizer,
+          status: 'UPCOMING'
         }
       ])
       .select()
