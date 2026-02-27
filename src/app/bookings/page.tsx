@@ -1,4 +1,6 @@
 import Link from "next/link";
+import Image from "next/image";
+import lanyardLogo from "@/components/ui/lanyard.png";
 import { FadeIn, PageTransition } from "@/components/ui/motion";
 import { CancelRegistrationButton } from "@/components/ActionButtons";
 import {
@@ -68,8 +70,8 @@ export default async function BookingsPage() {
             <aside className="group/sidebar w-[72px] hover:w-[280px] bg-card/50 backdrop-blur-2xl h-full flex flex-col justify-between border-r border-white/[0.06] shrink-0 shadow-[4px_0_30px_-5px_rgba(0,0,0,0.5)] relative z-20 transition-all duration-300 ease-in-out overflow-hidden">
                 <div className="p-4 group-hover/sidebar:p-8 transition-all duration-300">
                     <div className="flex items-center gap-3 mb-10 h-11">
-                        <div className="w-11 h-11 min-w-[2.75rem] bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg shadow-indigo-500/40 text-white ring-1 ring-white/20">
-                            <span className="material-symbols-outlined font-bold text-[24px]">rocket_launch</span>
+                        <div className="w-11 h-11 min-w-[2.75rem] flex items-center justify-center rounded-xl overflow-hidden ring-1 ring-white/10">
+                            <Image src={lanyardLogo} alt="EventSphere Logo" width={32} height={32} className="object-contain" />
                         </div>
                         <span className="font-extrabold text-xl tracking-tight text-white drop-shadow-sm whitespace-nowrap opacity-0 group-hover/sidebar:opacity-100 transition-opacity duration-300 delay-100">EventSphere</span>
                     </div>
@@ -82,7 +84,7 @@ export default async function BookingsPage() {
                             <span className="material-symbols-outlined text-[20px] min-w-[20px]">explore</span>
                             <span className="font-medium text-sm whitespace-nowrap opacity-0 group-hover/sidebar:opacity-100 transition-opacity duration-300 delay-100 hidden group-hover/sidebar:inline">Explore Events</span>
                         </Link>
-                        <Link href="/bookings" className="flex items-center justify-center group-hover/sidebar:justify-start gap-0 group-hover/sidebar:gap-4 w-10 h-10 group-hover/sidebar:w-auto group-hover/sidebar:h-auto group-hover/sidebar:px-4 group-hover/sidebar:py-3.5 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-lg shadow-indigo-500/30 ring-1 ring-white/10 hover:shadow-indigo-500/50 hover:-translate-y-0.5 transition-all duration-300">
+                        <Link href="/bookings" className="flex items-center justify-center group-hover/sidebar:justify-start gap-0 group-hover/sidebar:gap-4 w-10 h-10 group-hover/sidebar:w-auto group-hover/sidebar:h-auto group-hover/sidebar:px-4 group-hover/sidebar:py-3.5 rounded-xl bg-blue-600 text-white shadow-lg shadow-blue-500/30 ring-1 ring-white/10 hover:shadow-blue-500/50 hover:-translate-y-0.5 transition-all duration-300">
                             <span className="material-symbols-outlined text-[20px] min-w-[20px]">confirmation_number</span>
                             <span className="font-semibold text-sm whitespace-nowrap opacity-0 group-hover/sidebar:opacity-100 transition-opacity duration-300 delay-100 hidden group-hover/sidebar:inline">My Bookings</span>
                         </Link>

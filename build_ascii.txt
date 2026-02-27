@@ -1,0 +1,63 @@
+
+> eventsphere@0.1.0 build
+> next build
+
+??? Next.js 16.1.6 (Turbopack)
+- Environments: .env
+
+npm : ??? The "middleware" 
+file convention is deprecated. 
+Please use "proxy" instead. 
+Learn more: https://nextjs.org/
+docs/messages/middleware-to-pro
+xy
+At line:1 char:1
++ npm run build 2>&1 | 
+Tee-Object -FilePath build.log
++ ~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          :  
+   NotSpecified: (??? The "mi  
+  ddle...leware-to-proxy:Str   
+ ing) [], RemoteException
+    + FullyQualifiedErrorId :  
+   NativeCommandError
+ 
+  Creating an optimized production build ...
+??? Compiled successfully in 5.1s
+  Running TypeScript ...
+  Collecting page data using 11 workers ...
+  Generating static pages using 11 workers (0/19) ...
+  Generating static pages using 11 workers (4/19) 
+  Generating static pages using 11 workers (9/19) 
+  Generating static pages using 11 workers (14/19) 
+??? Generating static pages using 11 workers (19/19) in 692.2ms
+  Finalizing page optimization ...
+
+Route (app)
+??? ??? /
+??? ??? /_not-found
+??? ?? /admin/events
+??? ?? /admin/registrations
+??? ?? /api/admin/events
+??? ?? /api/admin/events/[id]
+??? ?? /api/admin/registrations
+??? ?? /api/events
+??? ?? /api/events/[id]
+??? ?? /api/register
+??? ?? /api/register/[id]
+??? ?? /api/seed
+??? ?? /api/upload
+??? ?? /api/user/profile
+??? ?? /auth/signout
+??? ?? /bookings
+??? ?? /dashboard
+??? ?? /explore
+??? ??? /login
+??? ?? /student/dashboard
+
+
+?? Proxy (Middleware)
+
+???  (Static)   prerendered as static content
+??  (Dynamic)  server-rendered on demand
+

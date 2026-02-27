@@ -135,7 +135,7 @@ export function ProfileEditModal({ open, onOpenChange }: ProfileEditModalProps) 
                             <p className="text-red-400 text-sm font-medium bg-red-500/10 border border-red-500/20 rounded-lg px-3 py-2">{error}</p>
                         )}
                         <div className="flex justify-end pt-2">
-                            <Button type="submit" disabled={loading} className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-bold shadow-lg shadow-indigo-500/30 border border-white/10">
+                            <Button type="submit" disabled={loading} className="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold shadow-lg shadow-blue-500/30 border border-white/10">
                                 {loading ? (
                                     <span className="flex items-center gap-2">
                                         <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />

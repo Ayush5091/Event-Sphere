@@ -1,0 +1,206 @@
+"use client";
+
+import { forwardRef, useImperativeHandle, useEffect, useState } from "react";
+
+export type CardVariant = "dark" | "light";
+
+interface CardTemplateProps {
+  userName: string;
+  variant: CardVariant;
+  onTextureReady: (dataUrl: string) => void;
+  city?: string;
+  date?: string;
+}
+
+export interface CardTemplateRef {
+  captureTexture: () => Promise<void>;
+  exportCard: () => void;
+}
+
+const CANVAS_SIZE = 1376;
+
+const CardTemplate = forwardRef<CardTemplateRef, CardTemplateProps>(
+  ({ userName, variant, onTextureReady, city, date }, ref) => {
+    const [baseImage, setBaseImage] = useState<HTMLImageElement | null>(null);
+    const [logoImage, setLogoImage] = useState<HTMLImageElement | null>(null);
+
+    const imageSrc = variant === "dark" ? "/card-base-dark.png" : "/card-base-light.png";
+    const textColor = variant === "dark" ? "#ffffff" : "#000000";
+
+    // Preload the base card image
+    useEffect(() => {
+      const img = new Image();
+      img.crossOrigin = "anonymous";
+      img.onload = () => setBaseImage(img);
+      img.src = imageSrc;
+    }, [imageSrc]);
+
+    // Preload the logo image (lanyard.png)
+    useEffect(() => {
+      const img = new Image();
+      img.crossOrigin = "anonymous";
+      img.onload = () => setLogoImage(img);
+      img.src = "/lanyard-logo.png";
+    }, []);
+
+    const captureTexture = async () => {
+      const canvas = document.createElement("canvas");
+      canvas.width = CANVAS_SIZE;
+      canvas.height = CANVAS_SIZE;
+      const ctx = canvas.getContext("2d");
+
+      if (!ctx) return;
+
+      // Draw base card image (fills entire canvas)
+      if (baseImage) {
+        ctx.drawImage(baseImage, 0, 0, CANVAS_SIZE, CANVAS_SIZE);
+      } else {
+        // Fallback black background if image not loaded
+        ctx.fillStyle = "#000000";
+        ctx.fillRect(0, 0, CANVAS_SIZE, CANVAS_SIZE);
+      }
+
+      // Cover the baked-in v0 logo and text with background color
+      ctx.fillStyle = variant === "dark" ? "#000000" : "#ffffff";
+      ctx.fillRect(0, 0, (CANVAS_SIZE / 2) + 20, 420);
+
+      // Draw logo overlay
+      if (logoImage) {
+        const logoSize = 200;
+        const logoX = 40;
+        const logoY = 80;
+        ctx.drawImage(logoImage, logoX, logoY, logoSize, logoSize);
+      }
+
+      // Draw user name at the bottom left area (below the geometric pattern)
+      const displayName = userName || "YOUR NAME";
+      ctx.fillStyle = textColor;
+      ctx.font = 'normal 48px "Geist Mono", monospace';
+      ctx.textAlign = "right";
+      ctx.textBaseline = "middle";
+
+      const textX = (CANVAS_SIZE / 2) - 55;
+      const textY = CANVAS_SIZE - 400;
+      ctx.fillText(displayName.toUpperCase(), textX, textY);
+
+
+
+      // Render date label
+      if (date) {
+        const dateRender = canvas.getContext("2d");
+
+        if (!dateRender) return;
+
+        dateRender.fillStyle = '#878787';
+        dateRender.font = 'normal 48px "Geist Mono", monospace';
+        dateRender.textAlign = "right";
+        dateRender.textBaseline = "middle";
+
+        const dateTextX = (CANVAS_SIZE / 2) - 55;
+        const dateTextY = CANVAS_SIZE - 1170;
+        dateRender.fillText(date.toUpperCase(), dateTextX, dateTextY);
+      }
+
+
+      const dataUrl = canvas.toDataURL("image/png");
+      onTextureReady(dataUrl);
+    };
+
+    const exportCard = () => {
+      const CROP_BOTTOM = 334;
+      const EXPORT_HEIGHT = CANVAS_SIZE - CROP_BOTTOM;
+
+      // First, create a full-size canvas to draw the complete card
+      const fullCanvas = document.createElement("canvas");
+      fullCanvas.width = CANVAS_SIZE;
+      fullCanvas.height = CANVAS_SIZE;
+      const fullCtx = fullCanvas.getContext("2d");
+
+      if (!fullCtx) return;
+
+      // Draw base card image (fills entire canvas)
+      if (baseImage) {
+        fullCtx.drawImage(baseImage, 0, 0, CANVAS_SIZE, CANVAS_SIZE);
+      } else {
+        // Fallback black background if image not loaded
+        fullCtx.fillStyle = "#000000";
+        fullCtx.fillRect(0, 0, CANVAS_SIZE, CANVAS_SIZE);
+      }
+
+      // Cover the baked-in v0 logo and text with background color
+      fullCtx.fillStyle = variant === "dark" ? "#000000" : "#ffffff";
+      fullCtx.fillRect(0, 0, (CANVAS_SIZE / 2) + 20, 420);
+
+      // Draw logo overlay
+      if (logoImage) {
+        const logoSize = 200;
+        const logoX = 40;
+        const logoY = 80;
+        fullCtx.drawImage(logoImage, logoX, logoY, logoSize, logoSize);
+      }
+
+      // Draw user name at the bottom left area (below the geometric pattern)
+      const displayName = userName || "YOUR NAME";
+      fullCtx.fillStyle = textColor;
+      fullCtx.font = 'normal 48px "Geist Mono", monospace';
+      fullCtx.textAlign = "right";
+      fullCtx.textBaseline = "middle";
+
+      const textX = (CANVAS_SIZE / 2) - 55;
+      const textY = CANVAS_SIZE - 400;
+      fullCtx.fillText(displayName.toUpperCase(), textX, textY);
+
+
+
+      // Render date label
+      if (date) {
+        const dateRender = fullCanvas.getContext("2d");
+
+        if (!dateRender) return;
+
+        dateRender.fillStyle = '#878787';
+        dateRender.font = 'normal 48px "Geist Mono", monospace';
+        dateRender.textAlign = "right";
+        dateRender.textBaseline = "middle";
+
+        const dateTextX = (CANVAS_SIZE / 2) - 55;
+        const dateTextY = CANVAS_SIZE - 1170;
+        dateRender.fillText(date.toUpperCase(), dateTextX, dateTextY);
+      }
+
+      // Create cropped export canvas (excludes bottom 334px)
+      const exportCanvas = document.createElement("canvas");
+      exportCanvas.width = CANVAS_SIZE;
+      exportCanvas.height = EXPORT_HEIGHT;
+      const exportCtx = exportCanvas.getContext("2d");
+
+      if (!exportCtx) return;
+
+      // Copy the top portion of the full canvas to the export canvas
+      exportCtx.drawImage(
+        fullCanvas,
+        0, 0, CANVAS_SIZE, EXPORT_HEIGHT, // Source: top portion
+        0, 0, CANVAS_SIZE, EXPORT_HEIGHT  // Destination: same size
+      );
+
+      // Export at full resolution
+      const dataUrl = exportCanvas.toDataURL("image/png", 1.0);
+      const link = document.createElement("a");
+      link.download = `v0-guadalajara-${userName || "card"}.png`;
+      link.href = dataUrl;
+      link.click();
+    };
+
+    useImperativeHandle(ref, () => ({
+      captureTexture,
+      exportCard,
+    }));
+
+    // This component doesn't render anything visible
+    return null;
+  }
+);
+
+CardTemplate.displayName = "CardTemplate";
+
+export default CardTemplate;

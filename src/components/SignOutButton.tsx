@@ -15,8 +15,8 @@ export function SignOutButton({ userName, userEmail, variant = "admin" }: SignOu
     const [isProfileOpen, setIsProfileOpen] = useState(false);
 
     // Theme colors based on variant
-    const ringColor = isStudent ? "ring-purple-500/30 shadow-purple-500/20" : "ring-emerald-500/30 shadow-emerald-500/20";
-    const bgFallbackColor = isStudent ? "bg-purple-900/50 text-purple-300" : "bg-emerald-900/50 text-emerald-300";
+    const ringColor = isStudent ? "ring-blue-500/30 shadow-blue-500/20" : "ring-emerald-500/30 shadow-emerald-500/20";
+    const bgFallbackColor = isStudent ? "bg-blue-900/50 text-blue-300" : "bg-emerald-900/50 text-emerald-300";
 
     return (
         <div className="flex items-center gap-3 p-2 group-hover/sidebar:p-3 rounded-2xl hover:bg-white/5 transition-all duration-300 border border-transparent hover:border-white/10 relative group/profile">
@@ -33,16 +33,14 @@ export function SignOutButton({ userName, userEmail, variant = "admin" }: SignOu
 
                 <div className="flex items-center">
                     {/* Edit Profile Action */}
-                    {isStudent && (
-                        <button
-                            type="button"
-                            onClick={() => setIsProfileOpen(true)}
-                            className="text-zinc-500 hover:text-indigo-400 p-1.5 rounded-lg hover:bg-white/10 transition-colors shrink-0"
-                            title="Edit Profile"
-                        >
-                            <span className="material-symbols-outlined text-[18px]">edit</span>
-                        </button>
-                    )}
+                    <button
+                        type="button"
+                        onClick={() => setIsProfileOpen(true)}
+                        className="text-zinc-500 hover:text-blue-400 p-1.5 rounded-lg hover:bg-white/10 transition-colors shrink-0"
+                        title="Edit Profile"
+                    >
+                        <span className="material-symbols-outlined text-[18px]">edit</span>
+                    </button>
 
                     {/* Sign Out Action Form */}
                     <form action="/auth/signout" method="post">
@@ -58,9 +56,7 @@ export function SignOutButton({ userName, userEmail, variant = "admin" }: SignOu
             </div>
 
             {/* Profile Edit Modal */}
-            {isStudent && (
-                <ProfileEditModal open={isProfileOpen} onOpenChange={setIsProfileOpen} />
-            )}
+            <ProfileEditModal open={isProfileOpen} onOpenChange={setIsProfileOpen} />
         </div>
     );
 }

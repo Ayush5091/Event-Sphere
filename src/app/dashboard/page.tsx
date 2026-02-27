@@ -1,4 +1,6 @@
 import Link from "next/link";
+import Image from "next/image";
+import lanyardLogo from "@/components/ui/lanyard.png";
 import { FadeIn, PageTransition } from "@/components/ui/motion";
 import { CreateEventModal } from "@/components/CreateEventModal";
 import {
@@ -60,7 +62,7 @@ function getDept(email: string): string {
 
 // Accent color palette for table rows
 const rowAccents = [
-    { text: "text-indigo-400", ring: "ring-indigo-500/40", shadow: "shadow-indigo-500/20", bg: "bg-indigo-900/40", avatarText: "text-indigo-300", rowHover: "hover:bg-indigo-500/[0.06]" },
+    { text: "text-indigo-400", ring: "ring-indigo-500/40", shadow: "shadow-blue-500/20", bg: "bg-indigo-900/40", avatarText: "text-indigo-300", rowHover: "hover:bg-indigo-500/[0.06]" },
     { text: "text-purple-400", ring: "ring-purple-500/40", shadow: "shadow-purple-500/20", bg: "bg-purple-900/40", avatarText: "text-purple-300", rowHover: "hover:bg-purple-500/[0.06]" },
     { text: "text-emerald-400", ring: "ring-emerald-500/40", shadow: "shadow-emerald-500/20", bg: "bg-emerald-900/40", avatarText: "text-emerald-300", rowHover: "hover:bg-emerald-500/[0.06]" },
     { text: "text-cyan-400", ring: "ring-cyan-500/40", shadow: "shadow-cyan-500/20", bg: "bg-cyan-900/40", avatarText: "text-cyan-300", rowHover: "hover:bg-cyan-500/[0.06]" },
@@ -146,14 +148,14 @@ export default async function DashboardPage() {
                 <div className="p-4 group-hover/sidebar:p-8 transition-all duration-300">
                     {/* Logo */}
                     <div className="flex items-center gap-3 mb-10 h-11">
-                        <div className="w-11 h-11 min-w-[2.75rem] bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg shadow-indigo-500/40 text-white ring-1 ring-white/20">
-                            <span className="material-symbols-outlined font-bold text-[24px]">rocket_launch</span>
+                        <div className="w-11 h-11 min-w-[2.75rem] flex items-center justify-center rounded-xl overflow-hidden ring-1 ring-white/10">
+                            <Image src={lanyardLogo} alt="EventSphere Logo" width={32} height={32} className="object-contain" />
                         </div>
                         <span className="font-extrabold text-xl tracking-tight text-white drop-shadow-sm whitespace-nowrap opacity-0 group-hover/sidebar:opacity-100 transition-opacity duration-300 delay-100">EventSphere</span>
                     </div>
 
                     <nav className="space-y-2">
-                        <Link href="/dashboard" className="flex items-center justify-center group-hover/sidebar:justify-start gap-0 group-hover/sidebar:gap-4 w-10 h-10 group-hover/sidebar:w-auto group-hover/sidebar:h-auto group-hover/sidebar:px-4 group-hover/sidebar:py-3.5 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-lg shadow-indigo-500/30 ring-1 ring-white/10 hover:shadow-indigo-500/50 hover:-translate-y-0.5 transition-all duration-300">
+                        <Link href="/dashboard" className="flex items-center justify-center group-hover/sidebar:justify-start gap-0 group-hover/sidebar:gap-4 w-10 h-10 group-hover/sidebar:w-auto group-hover/sidebar:h-auto group-hover/sidebar:px-4 group-hover/sidebar:py-3.5 rounded-xl bg-blue-600 text-white shadow-lg shadow-blue-500/30 ring-1 ring-white/10 hover:shadow-blue-500/50 hover:-translate-y-0.5 transition-all duration-300">
                             <span className="material-symbols-outlined text-[20px] min-w-[20px]">dashboard</span>
                             <span className="font-semibold text-sm whitespace-nowrap opacity-0 group-hover/sidebar:opacity-100 transition-opacity duration-300 delay-100 hidden group-hover/sidebar:inline">Dashboard</span>
                         </Link>
@@ -193,7 +195,7 @@ export default async function DashboardPage() {
                                     />
                                 </div>
                                 <CreateEventModal>
-                                    <Button size="lg" className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white rounded-xl shadow-lg shadow-indigo-500/30 font-bold px-6 border border-white/10 h-11 hover:-translate-y-0.5 hover:shadow-xl hover:shadow-indigo-500/40 transition-all duration-300">
+                                    <Button size="lg" className="bg-blue-600 hover:bg-blue-500 text-white rounded-xl shadow-lg shadow-blue-500/30 font-bold px-6 border border-white/10 h-11 hover:-translate-y-0.5 hover:shadow-xl hover:shadow-blue-500/40 transition-all duration-300">
                                         <span className="material-symbols-outlined text-[20px] mr-2">add_circle</span>
                                         Create Event
                                     </Button>
@@ -330,7 +332,7 @@ export default async function DashboardPage() {
                             <Card className="bg-card/50 backdrop-blur-2xl border-white/[0.06] shadow-2xl shadow-black/20 overflow-hidden hover:shadow-[0_30px_60px_-15px_rgba(99,102,241,0.1)] transition-all duration-500 ring-1 ring-white/[0.04]">
                                 <CardHeader className="bg-white/[0.03] border-b border-white/[0.06] px-6 py-5">
                                     <CardTitle className="text-lg text-white flex items-center gap-3">
-                                        <div className="p-2 bg-indigo-500/20 rounded-xl text-indigo-400 border border-indigo-500/25 shadow-md shadow-indigo-500/10">
+                                        <div className="p-2 bg-indigo-500/20 rounded-xl text-indigo-400 border border-indigo-500/25 shadow-md shadow-blue-500/10">
                                             <span className="material-symbols-outlined text-[20px]">recent_actors</span>
                                         </div>
                                         Recent Registrations

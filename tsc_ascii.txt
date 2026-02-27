@@ -1,0 +1,2 @@
+src/components/ui/lanyard.tsx(265,17): error TS2339: Property 'meshLineGeometry' does not exist on type 'JSX.IntrinsicElements'.
+src/components/ui/lanyard.tsx(266,17): error TS2339: Property 'meshLineMaterial' does not exist on type 'JSX.IntrinsicElements'.

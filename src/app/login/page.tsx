@@ -2,10 +2,13 @@
 
 import { useState } from "react";
 import { login, signup } from "./actions";
+import Image from "next/image";
+import lanyardLogo from "@/components/ui/lanyard.png";
 import { FadeIn, PageTransition, StaggerContainer, StaggerItem } from "@/components/ui/motion";
 
 export default function LoginPage() {
     const [isLogin, setIsLogin] = useState(true);
+    const [role, setRole] = useState<'student' | 'admin'>('student');
     const [error, setError] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(false);
 
@@ -36,8 +39,8 @@ export default function LoginPage() {
                     <PageTransition>
                         <FadeIn direction="up">
                             <div className="flex justify-center md:justify-start items-center gap-4 mb-16">
-                                <div className="w-16 h-16 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-lg shadow-indigo-500/40 text-white ring-1 ring-white/20">
-                                    <span className="material-symbols-outlined font-bold text-[36px]">rocket_launch</span>
+                                <div className="w-16 h-16 flex items-center justify-center rounded-2xl overflow-hidden ring-1 ring-white/10">
+                                    <Image src={lanyardLogo} alt="EventSphere Logo" width={48} height={48} className="object-contain" />
                                 </div>
                                 <span className="font-extrabold text-3xl md:text-4xl tracking-tight text-white drop-shadow-sm">EventSphere</span>
                             </div>
@@ -78,11 +81,38 @@ export default function LoginPage() {
                     <FadeIn direction="left" delay={0.2} className="w-full max-w-md">
                         <div className="bg-card/40 backdrop-blur-2xl border border-white/10 rounded-3xl p-8 shadow-2xl overflow-y-auto max-h-[90vh]">
                             <h2 className="text-3xl font-bold text-white mb-2 text-center">
-                                {isLogin ? "Welcome Back" : "Create an Account"}
+                                {isLogin ? (role === 'admin' ? "Admin Portal" : "Welcome Back") : "Create an Account"}
                             </h2>
-                            <p className="text-center text-muted-foreground mb-8">
-                                {isLogin ? "Sign in to manage your events." : "Join EventSphere today."}
+                            <p className="text-center text-muted-foreground mb-6">
+                                {isLogin ? (role === 'admin' ? "Secure access for administrators." : "Sign in to manage your events.") : "Join EventSphere today."}
                             </p>
+
+                            {/* Role Toggle Slider */}
+                            {isLogin && (
+                                <div className="mb-8 p-1 bg-white/5 border border-white/10 rounded-2xl flex relative overflow-hidden">
+                                    <div
+                                        className="absolute top-1 bottom-1 transition-all duration-300 ease-out bg-blue-600 rounded-xl shadow-lg shadow-blue-500/20"
+                                        style={{
+                                            left: role === 'student' ? '4px' : '50%',
+                                            width: 'calc(50% - 4px)'
+                                        }}
+                                    />
+                                    <button
+                                        type="button"
+                                        onClick={() => setRole('student')}
+                                        className={`flex-1 py-2.5 text-sm font-bold relative z-10 transition-colors duration-300 ${role === 'student' ? 'text-white' : 'text-zinc-500 hover:text-zinc-300'}`}
+                                    >
+                                        Student
+                                    </button>
+                                    <button
+                                        type="button"
+                                        onClick={() => setRole('admin')}
+                                        className={`flex-1 py-2.5 text-sm font-bold relative z-10 transition-colors duration-300 ${role === 'admin' ? 'text-white' : 'text-zinc-500 hover:text-zinc-300'}`}
+                                    >
+                                        Admin
+                                    </button>
+                                </div>
+                            )}
 
                             <form action={handleSubmit} className="space-y-5">
                                 {!isLogin && (
@@ -139,7 +169,7 @@ export default function LoginPage() {
                                 <button
                                     type="submit"
                                     disabled={isLoading}
-                                    className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-semibold py-3.5 px-4 rounded-xl shadow-lg shadow-indigo-500/25 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex justify-center items-center gap-2 mt-4"
+                                    className="w-full bg-blue-600 hover:bg-blue-500 text-white font-semibold py-3.5 px-4 rounded-xl shadow-lg shadow-blue-500/25 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex justify-center items-center gap-2 mt-4"
                                 >
                                     {isLoading ? (
                                         <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
@@ -155,20 +185,39 @@ export default function LoginPage() {
                                 </button>
                             </form>
 
-                            <div className="mt-8 text-center">
-                                <p className="text-zinc-400 text-sm">
-                                    {isLogin ? "Don't have an account?" : "Already have an account?"}
-                                    <button
-                                        onClick={() => {
-                                            setIsLogin(!isLogin);
-                                            setError(null);
-                                        }}
-                                        className="ml-2 text-indigo-400 hover:text-indigo-300 font-semibold transition-colors"
-                                    >
-                                        {isLogin ? "Sign Up" : "Sign In"}
-                                    </button>
-                                </p>
-                            </div>
+                            {isLogin && role === 'student' && (
+                                <div className="mt-8 text-center">
+                                    <p className="text-zinc-400 text-sm">
+                                        Don't have an account?
+                                        <button
+                                            onClick={() => {
+                                                setIsLogin(false);
+                                                setError(null);
+                                            }}
+                                            className="ml-2 text-blue-400 hover:text-blue-300 font-semibold transition-colors"
+                                        >
+                                            Sign Up
+                                        </button>
+                                    </p>
+                                </div>
+                            )}
+
+                            {!isLogin && (
+                                <div className="mt-8 text-center">
+                                    <p className="text-zinc-400 text-sm">
+                                        Already have an account?
+                                        <button
+                                            onClick={() => {
+                                                setIsLogin(true);
+                                                setError(null);
+                                            }}
+                                            className="ml-2 text-blue-400 hover:text-blue-300 font-semibold transition-colors"
+                                        >
+                                            Sign In
+                                        </button>
+                                    </p>
+                                </div>
+                            )}
                         </div>
                     </FadeIn>
                 </div>
