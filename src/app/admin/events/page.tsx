@@ -1,4 +1,7 @@
 import Link from "next/link";
+import { FadeIn, PageTransition } from "@/components/ui/motion";
+import { CreateEventModal } from "@/components/CreateEventModal";
+import { DeleteEventButton, MarkCompletedButton } from "@/components/ActionButtons";
 import {
     Card,
     CardContent,
@@ -109,132 +112,149 @@ export default async function ManageEventsPage() {
 
             {/* Main Content */}
             <main className="flex-1 h-full overflow-y-auto overflow-x-hidden relative p-8 z-10">
-                <header className="flex justify-between items-center mb-8">
-                    <div>
-                        <h1 className="text-3xl font-extrabold text-white mb-2 tracking-tight">Manage Events</h1>
-                        <p className="text-muted-foreground font-medium text-sm">Create, edit, and manage all campus events.</p>
-                    </div>
-                    <div className="flex items-center gap-4">
-                        <div className="relative group w-64">
-                            <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground group-focus-within:text-indigo-400 transition-colors text-[20px]">search</span>
-                            <Input className="pl-10 pr-4 py-2 bg-card/50 backdrop-blur-md border-white/10 rounded-xl focus-visible:ring-indigo-500 focus-visible:ring-offset-0 text-white placeholder:text-muted-foreground" placeholder="Search events..." />
+                <PageTransition>
+                    <FadeIn direction="down">
+                        <header className="flex justify-between items-center mb-8">
+                            <div>
+                                <h1 className="text-3xl font-extrabold text-white mb-2 tracking-tight">Manage Events</h1>
+                                <p className="text-muted-foreground font-medium text-sm">Create, edit, and manage all campus events.</p>
+                            </div>
+                            <div className="flex items-center gap-4">
+                                <div className="relative group w-64">
+                                    <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground group-focus-within:text-indigo-400 transition-colors text-[20px]">search</span>
+                                    <Input className="pl-10 pr-4 py-2 bg-card/50 backdrop-blur-md border-white/10 rounded-xl focus-visible:ring-indigo-500 focus-visible:ring-offset-0 text-white placeholder:text-muted-foreground" placeholder="Search events..." />
+                                </div>
+                                <CreateEventModal>
+                                    <Button size="lg" className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white rounded-xl shadow-lg shadow-indigo-500/30 font-bold px-6 border border-white/10 h-11 hover:-translate-y-0.5 hover:shadow-xl transition-all duration-300">
+                                        <span className="material-symbols-outlined text-[20px] mr-2">add_circle</span>
+                                        Create Event
+                                    </Button>
+                                </CreateEventModal>
+                            </div>
+                        </header>
+                    </FadeIn>
+
+                    {/* Stats Row */}
+                    <FadeIn direction="up" delay={0.1}>
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                            <Card className="bg-card/50 backdrop-blur-2xl border-white/[0.06] shadow-xl ring-1 ring-white/[0.04] hover:-translate-y-1 transition-all duration-500">
+                                <CardContent className="p-6 flex items-center gap-4">
+                                    <div className="p-3 bg-indigo-500/15 rounded-xl border border-indigo-500/25 text-indigo-400">
+                                        <span className="material-symbols-outlined text-[24px]">event</span>
+                                    </div>
+                                    <div>
+                                        <p className="text-muted-foreground text-xs font-semibold uppercase tracking-wider">Total Events</p>
+                                        <h3 className="text-2xl font-extrabold text-white">{allEvents.length}</h3>
+                                    </div>
+                                </CardContent>
+                            </Card>
+                            <Card className="bg-card/50 backdrop-blur-2xl border-white/[0.06] shadow-xl ring-1 ring-white/[0.04] hover:-translate-y-1 transition-all duration-500">
+                                <CardContent className="p-6 flex items-center gap-4">
+                                    <div className="p-3 bg-emerald-500/15 rounded-xl border border-emerald-500/25 text-emerald-400">
+                                        <span className="material-symbols-outlined text-[24px]">upcoming</span>
+                                    </div>
+                                    <div>
+                                        <p className="text-muted-foreground text-xs font-semibold uppercase tracking-wider">Upcoming</p>
+                                        <h3 className="text-2xl font-extrabold text-white">{upcomingCount}</h3>
+                                    </div>
+                                </CardContent>
+                            </Card>
+                            <Card className="bg-card/50 backdrop-blur-2xl border-white/[0.06] shadow-xl ring-1 ring-white/[0.04] hover:-translate-y-1 transition-all duration-500">
+                                <CardContent className="p-6 flex items-center gap-4">
+                                    <div className="p-3 bg-slate-500/15 rounded-xl border border-slate-500/25 text-slate-400">
+                                        <span className="material-symbols-outlined text-[24px]">check_circle</span>
+                                    </div>
+                                    <div>
+                                        <p className="text-muted-foreground text-xs font-semibold uppercase tracking-wider">Completed</p>
+                                        <h3 className="text-2xl font-extrabold text-white">{completedCount}</h3>
+                                    </div>
+                                </CardContent>
+                            </Card>
                         </div>
-                        <Button size="lg" className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white rounded-xl shadow-lg shadow-indigo-500/30 font-bold px-6 border border-white/10 h-11 hover:-translate-y-0.5 hover:shadow-xl transition-all duration-300">
-                            <span className="material-symbols-outlined text-[20px] mr-2">add_circle</span>
-                            Create Event
-                        </Button>
-                    </div>
-                </header>
+                    </FadeIn>
 
-                {/* Stats Row */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                    <Card className="bg-card/50 backdrop-blur-2xl border-white/[0.06] shadow-xl ring-1 ring-white/[0.04] hover:-translate-y-1 transition-all duration-500">
-                        <CardContent className="p-6 flex items-center gap-4">
-                            <div className="p-3 bg-indigo-500/15 rounded-xl border border-indigo-500/25 text-indigo-400">
-                                <span className="material-symbols-outlined text-[24px]">event</span>
-                            </div>
-                            <div>
-                                <p className="text-muted-foreground text-xs font-semibold uppercase tracking-wider">Total Events</p>
-                                <h3 className="text-2xl font-extrabold text-white">{allEvents.length}</h3>
-                            </div>
-                        </CardContent>
-                    </Card>
-                    <Card className="bg-card/50 backdrop-blur-2xl border-white/[0.06] shadow-xl ring-1 ring-white/[0.04] hover:-translate-y-1 transition-all duration-500">
-                        <CardContent className="p-6 flex items-center gap-4">
-                            <div className="p-3 bg-emerald-500/15 rounded-xl border border-emerald-500/25 text-emerald-400">
-                                <span className="material-symbols-outlined text-[24px]">upcoming</span>
-                            </div>
-                            <div>
-                                <p className="text-muted-foreground text-xs font-semibold uppercase tracking-wider">Upcoming</p>
-                                <h3 className="text-2xl font-extrabold text-white">{upcomingCount}</h3>
-                            </div>
-                        </CardContent>
-                    </Card>
-                    <Card className="bg-card/50 backdrop-blur-2xl border-white/[0.06] shadow-xl ring-1 ring-white/[0.04] hover:-translate-y-1 transition-all duration-500">
-                        <CardContent className="p-6 flex items-center gap-4">
-                            <div className="p-3 bg-slate-500/15 rounded-xl border border-slate-500/25 text-slate-400">
-                                <span className="material-symbols-outlined text-[24px]">check_circle</span>
-                            </div>
-                            <div>
-                                <p className="text-muted-foreground text-xs font-semibold uppercase tracking-wider">Completed</p>
-                                <h3 className="text-2xl font-extrabold text-white">{completedCount}</h3>
-                            </div>
-                        </CardContent>
-                    </Card>
-                </div>
-
-                {/* Events Table */}
-                <Card className="bg-card/50 backdrop-blur-2xl border-white/[0.06] shadow-2xl shadow-black/20 overflow-hidden ring-1 ring-white/[0.04]">
-                    <CardHeader className="bg-white/[0.03] border-b border-white/[0.06] px-6 py-5">
-                        <CardTitle className="text-lg text-white flex items-center gap-3">
-                            <div className="p-2 bg-indigo-500/20 rounded-xl text-indigo-400 border border-indigo-500/25 shadow-md shadow-indigo-500/10">
-                                <span className="material-symbols-outlined text-[20px]">calendar_month</span>
-                            </div>
-                            All Events
-                        </CardTitle>
-                    </CardHeader>
-                    <CardContent className="p-0">
-                        {allEvents.length === 0 ? (
-                            <div className="flex flex-col items-center justify-center py-16 text-center">
-                                <span className="material-symbols-outlined text-[48px] text-muted-foreground/50 mb-4">event_busy</span>
-                                <p className="text-muted-foreground font-semibold text-lg mb-1">No events yet</p>
-                                <p className="text-muted-foreground/70 text-sm">Create your first event to get started.</p>
-                            </div>
-                        ) : (
-                            <Table>
-                                <TableHeader>
-                                    <TableRow className="border-white/[0.06] hover:bg-transparent">
-                                        <TableHead className="font-bold text-muted-foreground uppercase tracking-wider text-xs py-4">Event</TableHead>
-                                        <TableHead className="font-bold text-muted-foreground uppercase tracking-wider text-xs py-4">Category</TableHead>
-                                        <TableHead className="font-bold text-muted-foreground uppercase tracking-wider text-xs py-4">Date</TableHead>
-                                        <TableHead className="font-bold text-muted-foreground uppercase tracking-wider text-xs py-4">Location</TableHead>
-                                        <TableHead className="font-bold text-muted-foreground uppercase tracking-wider text-xs py-4">Registrations</TableHead>
-                                        <TableHead className="font-bold text-muted-foreground uppercase tracking-wider text-xs py-4">Status</TableHead>
-                                    </TableRow>
-                                </TableHeader>
-                                <TableBody>
-                                    {allEvents.map((event) => {
-                                        const sCols = statusColors[event.status] || statusColors.UPCOMING;
-                                        const cCols = categoryColors[event.category || ""] || "bg-cyan-500/20 text-cyan-400 border-cyan-500/20";
-                                        const regCount = eventCounts[event.id] || 0;
-                                        return (
-                                            <TableRow key={event.id} className="border-white/[0.06] hover:bg-indigo-500/[0.04] transition-all duration-300 cursor-pointer">
-                                                <TableCell className="py-4">
-                                                    <div>
-                                                        <p className="font-bold text-white">{event.title}</p>
-                                                        <p className="text-xs text-muted-foreground mt-0.5">{event.organizer}</p>
-                                                    </div>
-                                                </TableCell>
-                                                <TableCell className="py-4">
-                                                    <Badge variant="outline" className={`${cCols} font-bold text-xs border`}>{event.category || "General"}</Badge>
-                                                </TableCell>
-                                                <TableCell className="py-4">
-                                                    <div>
-                                                        <p className="text-white font-medium text-sm">{formatDate(event.date)}</p>
-                                                        <p className="text-xs text-muted-foreground">{formatTime(event.date)}</p>
-                                                    </div>
-                                                </TableCell>
-                                                <TableCell className="py-4 text-slate-300 text-sm">{event.location}</TableCell>
-                                                <TableCell className="py-4">
-                                                    <div className="flex items-center gap-2">
-                                                        <span className="text-white font-bold">{regCount}</span>
-                                                        <span className="text-muted-foreground text-xs">/ {event.capacity}</span>
-                                                    </div>
-                                                </TableCell>
-                                                <TableCell className="py-4">
-                                                    <Badge variant="outline" className={`${sCols.badge} font-bold text-xs border flex items-center gap-1.5 w-fit`}>
-                                                        <div className={`w-1.5 h-1.5 rounded-full ${sCols.dot}`} />
-                                                        {event.status}
-                                                    </Badge>
-                                                </TableCell>
+                    {/* Events Table */}
+                    <FadeIn direction="up" delay={0.2}>
+                        <Card className="bg-card/50 backdrop-blur-2xl border-white/[0.06] shadow-2xl shadow-black/20 overflow-hidden ring-1 ring-white/[0.04]">
+                            <CardHeader className="bg-white/[0.03] border-b border-white/[0.06] px-6 py-5">
+                                <CardTitle className="text-lg text-white flex items-center gap-3">
+                                    <div className="p-2 bg-indigo-500/20 rounded-xl text-indigo-400 border border-indigo-500/25 shadow-md shadow-indigo-500/10">
+                                        <span className="material-symbols-outlined text-[20px]">calendar_month</span>
+                                    </div>
+                                    All Events
+                                </CardTitle>
+                            </CardHeader>
+                            <CardContent className="p-0">
+                                {allEvents.length === 0 ? (
+                                    <div className="flex flex-col items-center justify-center py-16 text-center">
+                                        <span className="material-symbols-outlined text-[48px] text-muted-foreground/50 mb-4">event_busy</span>
+                                        <p className="text-muted-foreground font-semibold text-lg mb-1">No events yet</p>
+                                        <p className="text-muted-foreground/70 text-sm">Create your first event to get started.</p>
+                                    </div>
+                                ) : (
+                                    <Table>
+                                        <TableHeader>
+                                            <TableRow className="border-white/[0.06] hover:bg-transparent">
+                                                <TableHead className="font-bold text-muted-foreground uppercase tracking-wider text-xs py-4">Event</TableHead>
+                                                <TableHead className="font-bold text-muted-foreground uppercase tracking-wider text-xs py-4">Category</TableHead>
+                                                <TableHead className="font-bold text-muted-foreground uppercase tracking-wider text-xs py-4">Date</TableHead>
+                                                <TableHead className="font-bold text-muted-foreground uppercase tracking-wider text-xs py-4">Location</TableHead>
+                                                <TableHead className="font-bold text-muted-foreground uppercase tracking-wider text-xs py-4">Registrations</TableHead>
+                                                <TableHead className="font-bold text-muted-foreground uppercase tracking-wider text-xs py-4">Status</TableHead>
+                                                <TableHead className="font-bold text-muted-foreground uppercase tracking-wider text-xs py-4 text-right">Actions</TableHead>
                                             </TableRow>
-                                        );
-                                    })}
-                                </TableBody>
-                            </Table>
-                        )}
-                    </CardContent>
-                </Card>
+                                        </TableHeader>
+                                        <TableBody>
+                                            {allEvents.map((event) => {
+                                                const sCols = statusColors[event.status] || statusColors.UPCOMING;
+                                                const cCols = categoryColors[event.category || ""] || "bg-cyan-500/20 text-cyan-400 border-cyan-500/20";
+                                                const regCount = eventCounts[event.id] || 0;
+                                                return (
+                                                    <TableRow key={event.id} className="border-white/[0.06] hover:bg-indigo-500/[0.04] transition-all duration-300 cursor-pointer">
+                                                        <TableCell className="py-4">
+                                                            <div>
+                                                                <p className="font-bold text-white">{event.title}</p>
+                                                                <p className="text-xs text-muted-foreground mt-0.5">{event.organizer}</p>
+                                                            </div>
+                                                        </TableCell>
+                                                        <TableCell className="py-4">
+                                                            <Badge variant="outline" className={`${cCols} font-bold text-xs border`}>{event.category || "General"}</Badge>
+                                                        </TableCell>
+                                                        <TableCell className="py-4">
+                                                            <div>
+                                                                <p className="text-white font-medium text-sm">{formatDate(event.date)}</p>
+                                                                <p className="text-xs text-muted-foreground">{formatTime(event.date)}</p>
+                                                            </div>
+                                                        </TableCell>
+                                                        <TableCell className="py-4 text-slate-300 text-sm">{event.location}</TableCell>
+                                                        <TableCell className="py-4">
+                                                            <div className="flex items-center gap-2">
+                                                                <span className="text-white font-bold">{regCount}</span>
+                                                                <span className="text-muted-foreground text-xs">/ {event.capacity}</span>
+                                                            </div>
+                                                        </TableCell>
+                                                        <TableCell className="py-4">
+                                                            <Badge variant="outline" className={`${sCols.badge} font-bold text-xs border flex items-center gap-1.5 w-fit`}>
+                                                                <div className={`w-1.5 h-1.5 rounded-full ${sCols.dot}`} />
+                                                                {event.status}
+                                                            </Badge>
+                                                        </TableCell>
+                                                        <TableCell className="py-4 text-right">
+                                                            <div className="flex items-center justify-end gap-1">
+                                                                <MarkCompletedButton eventId={event.id} currentStatus={event.status} />
+                                                                <DeleteEventButton eventId={event.id} />
+                                                            </div>
+                                                        </TableCell>
+                                                    </TableRow>
+                                                );
+                                            })}
+                                        </TableBody>
+                                    </Table>
+                                )}
+                            </CardContent>
+                        </Card>
+                    </FadeIn>
+                </PageTransition>
             </main>
         </div>
     );
