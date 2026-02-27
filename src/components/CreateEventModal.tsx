@@ -41,6 +41,7 @@ export function CreateEventModal({ children }: { children: React.ReactNode }) {
             capacity: form.get("capacity") as string,
             category: form.get("category") as string,
             organizer: form.get("organizer") as string,
+            imageUrl: form.get("imageUrl") as string,
         };
 
         try {
@@ -114,6 +115,10 @@ export function CreateEventModal({ children }: { children: React.ReactNode }) {
                             <Label htmlFor="organizer" className="text-sm font-semibold text-slate-300">Organizer</Label>
                             <Input id="organizer" name="organizer" required placeholder="e.g. CS Dept" className="bg-white/5 border-white/10 text-white placeholder:text-muted-foreground focus-visible:ring-indigo-500" />
                         </div>
+                    </div>
+                    <div className="space-y-2">
+                        <Label htmlFor="imageUrl" className="text-sm font-semibold text-slate-300">Banner Image URL (Optional)</Label>
+                        <Input id="imageUrl" name="imageUrl" placeholder="https://images.unsplash.com/photo..." className="bg-white/5 border-white/10 text-white placeholder:text-muted-foreground focus-visible:ring-indigo-500" />
                     </div>
                     {error && (
                         <p className="text-red-400 text-sm font-medium bg-red-500/10 border border-red-500/20 rounded-lg px-3 py-2">{error}</p>

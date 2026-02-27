@@ -85,9 +85,9 @@ export default async function ManageEventsPage() {
             {/* Sidebar */}
             <aside className="group/sidebar w-[72px] hover:w-[280px] bg-card/50 backdrop-blur-2xl h-full flex flex-col justify-between border-r border-white/[0.06] shrink-0 shadow-[4px_0_30px_-5px_rgba(0,0,0,0.5)] relative z-20 transition-all duration-300 ease-in-out overflow-hidden">
                 <div className="p-4 group-hover/sidebar:p-8 transition-all duration-300">
-                    <div className="flex items-center gap-3 mb-10 h-11">
-                        <div className="w-11 h-11 min-w-[2.75rem] flex items-center justify-center rounded-xl overflow-hidden ring-1 ring-white/10">
-                            <Image src={lanyardLogo} alt="EventSphere Logo" width={32} height={32} className="object-contain" />
+                    <div className="flex items-center gap-3 mb-10 h-14">
+                        <div className="w-14 h-14 min-w-[3.5rem] flex items-center justify-center rounded-xl overflow-hidden ring-1 ring-white/10 shadow-lg shadow-blue-500/5">
+                            <Image src={lanyardLogo} alt="EventSphere Logo" width={48} height={48} className="object-contain" />
                         </div>
                         <span className="font-extrabold text-xl tracking-tight text-white drop-shadow-sm whitespace-nowrap opacity-0 group-hover/sidebar:opacity-100 transition-opacity duration-300 delay-100">EventSphere</span>
                     </div>

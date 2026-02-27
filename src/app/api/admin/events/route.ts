@@ -4,7 +4,7 @@ import { supabase } from '@/lib/supabase';
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { title, description, date, location, capacity, category, organizer } = body;
+    const { title, description, date, location, capacity, category, organizer, imageUrl } = body;
 
     if (!title || !description || !date || !location || !capacity || !organizer) {
       return NextResponse.json(
@@ -24,6 +24,7 @@ export async function POST(request: Request) {
           capacity: parseInt(capacity, 10),
           category: category || 'Technical',
           organizer,
+          imageUrl: imageUrl || null,
           status: 'UPCOMING'
         }
       ])

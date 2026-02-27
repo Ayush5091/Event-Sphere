@@ -89,9 +89,9 @@ export default async function StudentDashboard() {
             {/* Student Sidebar */}
             <aside className="group/sidebar w-[72px] hover:w-[280px] bg-card/50 backdrop-blur-2xl h-full flex flex-col justify-between border-r border-white/[0.06] shrink-0 shadow-[4px_0_30px_-5px_rgba(0,0,0,0.5)] relative z-20 transition-all duration-300 ease-in-out overflow-hidden">
                 <div className="p-4 group-hover/sidebar:p-8 transition-all duration-300">
-                    <div className="flex items-center gap-3 mb-10 h-11">
-                        <div className="w-11 h-11 min-w-[2.75rem] flex items-center justify-center rounded-xl overflow-hidden ring-1 ring-white/10">
-                            <Image src={lanyardLogo} alt="EventSphere Logo" width={32} height={32} className="object-contain" />
+                    <div className="flex items-center gap-3 mb-10 h-14">
+                        <div className="w-14 h-14 min-w-[3.5rem] flex items-center justify-center rounded-xl overflow-hidden ring-1 ring-white/10 shadow-lg shadow-blue-500/5">
+                            <Image src={lanyardLogo} alt="EventSphere Logo" width={48} height={48} className="object-contain" />
                         </div>
                         <span className="font-extrabold text-xl tracking-tight text-white drop-shadow-sm whitespace-nowrap opacity-0 group-hover/sidebar:opacity-100 transition-opacity duration-300 delay-100">EventSphere</span>
                     </div>
@@ -227,7 +227,17 @@ export default async function StudentDashboard() {
                                         return (
                                             <Card key={booking.id} className="col-span-2 row-span-2 bg-card/50 backdrop-blur-2xl border-white/[0.06] shadow-2xl overflow-hidden group hover:-translate-y-1 hover:shadow-[0_30px_60px_-10px_rgba(99,102,241,0.15)] transition-all duration-500 ring-1 ring-white/[0.04]">
                                                 <div className={`h-44 ${cat.bg} flex items-center justify-center relative overflow-hidden`}>
-                                                    <span className={`material-symbols-outlined text-[80px] ${cat.color} opacity-30 group-hover:opacity-60 transition-opacity duration-500 group-hover:scale-110`}>{cat.icon}</span>
+                                                    {event.imageUrl ? (
+                                                        <Image
+                                                            src={event.imageUrl}
+                                                            alt={event.title}
+                                                            fill
+                                                            className="object-cover group-hover:scale-105 transition-transform duration-700"
+                                                        />
+                                                    ) : (
+                                                        <span className={`material-symbols-outlined text-[80px] ${cat.color} opacity-30 group-hover:opacity-60 transition-opacity duration-500 group-hover:scale-110`}>{cat.icon}</span>
+                                                    )}
+                                                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                                                     <div className="absolute top-3 left-3">
                                                         <Badge className={`${cat.bg} ${cat.color} border ${cat.border} font-bold text-xs uppercase tracking-wider`}>{event.category || "Event"}</Badge>
                                                     </div>
@@ -335,7 +345,17 @@ export default async function StudentDashboard() {
                                         return (
                                             <Card key={event.id} className="bg-card/50 backdrop-blur-2xl border-white/[0.06] shadow-xl overflow-hidden group hover:-translate-y-1.5 hover:shadow-[0_25px_50px_-10px_rgba(99,102,241,0.12)] transition-all duration-500 ring-1 ring-white/[0.04]">
                                                 <div className={`h-28 ${cat.bg} flex items-center justify-center relative overflow-hidden`}>
-                                                    <span className={`material-symbols-outlined text-[48px] ${cat.color} opacity-30 group-hover:opacity-60 transition-opacity duration-500 group-hover:scale-110`}>{cat.icon}</span>
+                                                    {event.imageUrl ? (
+                                                        <Image
+                                                            src={event.imageUrl}
+                                                            alt={event.title}
+                                                            fill
+                                                            className="object-cover group-hover:scale-105 transition-transform duration-700"
+                                                        />
+                                                    ) : (
+                                                        <span className={`material-symbols-outlined text-[48px] ${cat.color} opacity-30 group-hover:opacity-60 transition-opacity duration-500 group-hover:scale-110`}>{cat.icon}</span>
+                                                    )}
+                                                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                                                     <div className="absolute top-2 left-2">
                                                         <Badge className={`${cat.bg} ${cat.color} border ${cat.border} font-bold text-[10px] uppercase tracking-wider`}>{event.category || "Event"}</Badge>
                                                     </div>

@@ -39,8 +39,8 @@ export default function LoginPage() {
                     <PageTransition>
                         <FadeIn direction="up">
                             <div className="flex justify-center md:justify-start items-center gap-4 mb-16">
-                                <div className="w-16 h-16 flex items-center justify-center rounded-2xl overflow-hidden ring-1 ring-white/10">
-                                    <Image src={lanyardLogo} alt="EventSphere Logo" width={48} height={48} className="object-contain" />
+                                <div className="w-20 h-20 flex items-center justify-center rounded-2xl overflow-hidden ring-1 ring-white/10 text-blue-500 shadow-xl shadow-blue-500/10 backdrop-blur-md">
+                                    <Image src={lanyardLogo} alt="EventSphere Logo" width={64} height={64} className="object-contain" />
                                 </div>
                                 <span className="font-extrabold text-3xl md:text-4xl tracking-tight text-white drop-shadow-sm">EventSphere</span>
                             </div>
@@ -166,6 +166,8 @@ export default function LoginPage() {
                                     </div>
                                 )}
 
+                                <input type="hidden" name="role" value={role} />
+
                                 <button
                                     type="submit"
                                     disabled={isLoading}
@@ -185,7 +187,7 @@ export default function LoginPage() {
                                 </button>
                             </form>
 
-                            {isLogin && role === 'student' && (
+                            {isLogin && (
                                 <div className="mt-8 text-center">
                                     <p className="text-zinc-400 text-sm">
                                         Don't have an account?
