@@ -18,7 +18,7 @@ import {
 } from "@/components/ui/table";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
-import { supabase } from "@/lib/supabase";
+import { supabaseAdmin } from "@/lib/supabase";
 
 // Helper: get initials from a name
 function getInitials(name: string): string {
@@ -64,20 +64,62 @@ const rowAccents = [
 
 export default async function DashboardPage() {
     // Fetch stats from Supabase
-    const [eventsRes, registrationsRes, recentRegRes] = await Promise.all([
-        supabase.from("Event").select("id, status"),
-        supabase.from("Registration").select("id", { count: "exact", head: true }),
-        supabase
+    const [eventsRes, registrationsRes, recentRegRes, allRegsRes] = await Promise.all([
+        supabaseAdmin.from("Event").select("id, status"),
+        supabaseAdmin.from("Registration").select("id", { count: "exact", head: true }),
+        supabaseAdmin
             .from("Registration")
             .select(`*, Event ( title )`)
             .order("createdAt", { ascending: false })
             .limit(5),
+        supabaseAdmin.from("Registration").select("createdAt"),
     ]);
 
     const events = eventsRes.data || [];
     const totalRegistrations = registrationsRes.count || 0;
-    const activeEvents = events.filter((e) => e.status === "UPCOMING").length;
+    const activeEvents = events.filter((e: Record<string, unknown>) => e.status === "UPCOMING").length;
     const recentRegistrations = recentRegRes.data || [];
+
+    // Build monthly chart data for the last 6 months
+    const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    const now = new Date();
+    const monthlyData: { label: string; count: number }[] = [];
+    for (let i = 5; i >= 0; i--) {
+        const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+        monthlyData.push({ label: monthNames[d.getMonth()], count: 0 });
+    }
+    const allRegs = allRegsRes.data || [];
+    for (const reg of allRegs) {
+        const rd = new Date(reg.createdAt as string);
+        const idx = monthlyData.findIndex((m) => {
+            const md = new Date(now.getFullYear(), now.getMonth() - (5 - monthlyData.indexOf(m)), 1);
+            return rd.getMonth() === md.getMonth() && rd.getFullYear() === md.getFullYear();
+        });
+        if (idx !== -1) monthlyData[idx].count++;
+    }
+    const maxCount = Math.max(...monthlyData.map((m) => m.count), 1);
+
+    // Generate SVG chart points
+    const chartW = 1000;
+    const chartH = 260;
+    const padX = 60;
+    const padY = 30;
+    const innerW = chartW - padX * 2;
+    const innerH = chartH - padY * 2;
+    const points = monthlyData.map((m, i) => ({
+        x: padX + (i / (monthlyData.length - 1)) * innerW,
+        y: padY + innerH - (m.count / maxCount) * innerH,
+        label: m.label,
+        count: m.count,
+    }));
+    const lineD = points.map((p, i) => {
+        if (i === 0) return `M${p.x},${p.y}`;
+        const prev = points[i - 1];
+        const cpx1 = prev.x + (p.x - prev.x) / 3;
+        const cpx2 = prev.x + (2 * (p.x - prev.x)) / 3;
+        return `C${cpx1},${prev.y} ${cpx2},${p.y} ${p.x},${p.y}`;
+    }).join(" ");
+    const areaD = lineD + ` L${points[points.length - 1].x},${chartH} L${points[0].x},${chartH} Z`;
 
     return (
         <div className="bg-background text-foreground antialiased overflow-hidden h-screen flex font-sans">
@@ -161,7 +203,7 @@ export default async function DashboardPage() {
                         <CardHeader className="flex flex-row items-start justify-between pb-8 relative z-10">
                             <div>
                                 <CardTitle className="text-xl text-white">Registration Trends</CardTitle>
-                                <CardDescription className="text-muted-foreground mt-1">Daily signups over last 30 days</CardDescription>
+                                <CardDescription className="text-muted-foreground mt-1">Monthly signups over last 6 months</CardDescription>
                             </div>
                         </CardHeader>
                         <CardContent className="relative z-10">
@@ -176,28 +218,55 @@ export default async function DashboardPage() {
                                     <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">Total Events</p>
                                     <h4 className="text-3xl font-extrabold text-white">{events.length}</h4>
                                 </div>
+                                <div>
+                                    <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">This Month</p>
+                                    <h4 className="text-3xl font-extrabold text-white">{monthlyData[monthlyData.length - 1].count}</h4>
+                                </div>
                             </div>
 
-                            {/* Chart */}
-                            <div className="h-48 w-full rounded-xl flex items-end relative overflow-hidden">
-                                <svg className="w-full h-full" preserveAspectRatio="none" viewBox="0 0 1000 300">
+                            {/* Dynamic Chart */}
+                            <div className="h-56 w-full rounded-xl relative overflow-hidden">
+                                <svg className="w-full h-full" viewBox={`0 0 ${chartW} ${chartH + 30}`} preserveAspectRatio="none">
                                     <defs>
                                         <linearGradient id="chartGlow" x1="0" y1="0" x2="0" y2="1">
-                                            <stop offset="0%" stopColor="#6366f1" stopOpacity="0.3" />
-                                            <stop offset="100%" stopColor="#6366f1" stopOpacity="0" />
+                                            <stop offset="0%" stopColor="#818cf8" stopOpacity="0.25" />
+                                            <stop offset="100%" stopColor="#818cf8" stopOpacity="0" />
                                         </linearGradient>
                                         <filter id="lineGlow">
-                                            <feGaussianBlur stdDeviation="6" result="blur" />
+                                            <feGaussianBlur stdDeviation="4" result="blur" />
                                             <feMerge>
                                                 <feMergeNode in="blur" />
                                                 <feMergeNode in="SourceGraphic" />
                                             </feMerge>
                                         </filter>
                                     </defs>
-                                    <path d="M0,250 C150,250 150,100 300,100 C450,100 450,220 600,220 C750,220 750,50 1000,50 L1000,300 L0,300 Z" fill="url(#chartGlow)" />
-                                    <path d="M0,250 C150,250 150,100 300,100 C450,100 450,220 600,220 C750,220 750,50 1000,50" fill="none" stroke="#818cf8" strokeWidth="3" strokeLinecap="round" filter="url(#lineGlow)" />
-                                    <circle cx="600" cy="220" r="8" fill="#818cf8" fillOpacity="0.3" className="animate-pulse" />
-                                    <circle cx="600" cy="220" r="4" fill="#fff" stroke="#818cf8" strokeWidth="2" />
+
+                                    {/* Horizontal grid lines */}
+                                    {[0, 0.25, 0.5, 0.75, 1].map((pct) => (
+                                        <line key={pct} x1={padX} y1={padY + innerH * (1 - pct)} x2={chartW - padX} y2={padY + innerH * (1 - pct)} stroke="white" strokeOpacity="0.04" strokeWidth="1" />
+                                    ))}
+
+                                    {/* Area fill */}
+                                    <path d={areaD} fill="url(#chartGlow)" />
+
+                                    {/* Line */}
+                                    <path d={lineD} fill="none" stroke="#818cf8" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" filter="url(#lineGlow)" />
+
+                                    {/* Data points + labels */}
+                                    {points.map((p, i) => (
+                                        <g key={i}>
+                                            {/* Vertical dash line */}
+                                            <line x1={p.x} y1={p.y} x2={p.x} y2={chartH} stroke="white" strokeOpacity="0.06" strokeWidth="1" strokeDasharray="4 4" />
+                                            {/* Glow dot */}
+                                            <circle cx={p.x} cy={p.y} r="8" fill="#818cf8" fillOpacity="0.2" />
+                                            {/* Solid dot */}
+                                            <circle cx={p.x} cy={p.y} r="4" fill="#fff" stroke="#818cf8" strokeWidth="2" />
+                                            {/* Count above dot */}
+                                            <text x={p.x} y={p.y - 14} textAnchor="middle" fill="#c7d2fe" fontSize="12" fontWeight="700">{p.count}</text>
+                                            {/* Month label below */}
+                                            <text x={p.x} y={chartH + 20} textAnchor="middle" fill="#64748b" fontSize="12" fontWeight="600">{p.label}</text>
+                                        </g>
+                                    ))}
                                 </svg>
                             </div>
                         </CardContent>
