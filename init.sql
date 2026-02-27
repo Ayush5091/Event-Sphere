@@ -13,7 +13,6 @@ CREATE TABLE "Event" (
   "category" TEXT,          -- e.g., 'Technical', 'Sports'
   "organizer" TEXT NOT NULL,-- e.g., 'Computer Science Dept'
   "status" TEXT NOT NULL DEFAULT 'UPCOMING', 
-  
   "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
   "updatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
