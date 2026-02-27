@@ -30,16 +30,24 @@ export async function proxy(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser();
 
-  // Protect /dashboard (admin) routes — redirect to login if not authenticated
-  if (request.nextUrl.pathname.startsWith('/dashboard') && !user) {
+  const pathname = request.nextUrl.pathname;
+
+  // Protected routes — redirect to login if not authenticated
+  const isProtectedPage =
+    pathname.startsWith('/dashboard') ||
+    pathname.startsWith('/admin') ||
+    pathname.startsWith('/bookings') ||
+    pathname.startsWith('/student');
+
+  if (isProtectedPage && !user) {
     const url = request.nextUrl.clone();
     url.pathname = '/login';
-    url.searchParams.set('redirectTo', request.nextUrl.pathname);
+    url.searchParams.set('redirectTo', pathname);
     return NextResponse.redirect(url);
   }
 
   // Protect /api/admin routes — return 401 if not authenticated
-  if (request.nextUrl.pathname.startsWith('/api/admin') && !user) {
+  if (pathname.startsWith('/api/admin') && !user) {
     return NextResponse.json(
       { success: false, message: 'Unauthorized' },
       { status: 401 }
@@ -47,11 +55,7 @@ export async function proxy(request: NextRequest) {
   }
 
   // Redirect authenticated users away from login/signup pages
-  if (
-    (request.nextUrl.pathname === '/login' ||
-      request.nextUrl.pathname === '/signup') &&
-    user
-  ) {
+  if ((pathname === '/login' || pathname === '/signup') && user) {
     const url = request.nextUrl.clone();
     url.pathname = '/dashboard';
     return NextResponse.redirect(url);
@@ -63,6 +67,9 @@ export async function proxy(request: NextRequest) {
 export const config = {
   matcher: [
     '/dashboard/:path*',
+    '/admin/:path*',
+    '/bookings/:path*',
+    '/student/:path*',
     '/api/admin/:path*',
     '/login',
     '/signup',
