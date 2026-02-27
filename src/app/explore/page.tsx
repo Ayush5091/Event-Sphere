@@ -1,4 +1,6 @@
 import Link from "next/link";
+import { FadeIn, PageTransition, StaggerContainer, StaggerItem } from "@/components/ui/motion";
+import { BookEventModal } from "@/components/BookEventModal";
 import {
     Card,
     CardContent,
@@ -7,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
-import { supabase } from "@/lib/supabase";
+import { supabaseAdmin } from "@/lib/supabase";
 
 // Category → icon & color mapping
 const categoryStyles: Record<string, { icon: string; color: string; bg: string; border: string }> = {
@@ -46,7 +48,7 @@ interface Event {
 
 export default async function ExplorePage() {
     // Fetch events from Supabase
-    const { data: events, error } = await supabase
+    const { data: events, error } = await supabaseAdmin
         .from("Event")
         .select("*")
         .order("date", { ascending: true });
@@ -55,7 +57,7 @@ export default async function ExplorePage() {
     const eventsWithCounts: Event[] = [];
     if (events) {
         for (const event of events) {
-            const { count } = await supabase
+            const { count } = await supabaseAdmin
                 .from("Registration")
                 .select("id", { count: "exact", head: true })
                 .eq("eventId", event.id);
@@ -85,7 +87,7 @@ export default async function ExplorePage() {
                         <span className="font-extrabold text-xl tracking-tight text-white drop-shadow-sm whitespace-nowrap opacity-0 group-hover/sidebar:opacity-100 transition-opacity duration-300 delay-100">EventSphere</span>
                     </div>
                     <nav className="space-y-2">
-                        <Link href="/dashboard" className="flex items-center justify-center group-hover/sidebar:justify-start gap-0 group-hover/sidebar:gap-4 w-10 h-10 group-hover/sidebar:w-auto group-hover/sidebar:h-auto group-hover/sidebar:px-4 group-hover/sidebar:py-3.5 rounded-xl text-muted-foreground hover:bg-white/5 hover:text-white hover:shadow-md hover:-translate-y-0.5 transition-all duration-300">
+                        <Link href="/student/dashboard" className="flex items-center justify-center group-hover/sidebar:justify-start gap-0 group-hover/sidebar:gap-4 w-10 h-10 group-hover/sidebar:w-auto group-hover/sidebar:h-auto group-hover/sidebar:px-4 group-hover/sidebar:py-3.5 rounded-xl text-muted-foreground hover:bg-white/5 hover:text-white hover:shadow-md hover:-translate-y-0.5 transition-all duration-300">
                             <span className="material-symbols-outlined text-[20px] min-w-[20px]">dashboard</span>
                             <span className="font-medium text-sm whitespace-nowrap opacity-0 group-hover/sidebar:opacity-100 transition-opacity duration-300 delay-100 hidden group-hover/sidebar:inline">Dashboard</span>
                         </Link>
@@ -114,143 +116,149 @@ export default async function ExplorePage() {
 
             {/* Main Content */}
             <main className="flex-1 h-full overflow-y-auto overflow-x-hidden relative p-8 z-10">
-                <header className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-6">
-                    <div>
-                        <h1 className="text-3xl font-extrabold text-white mb-2 tracking-tight">Discover Events</h1>
-                        <p className="text-muted-foreground font-medium text-sm">Explore the best workshops, hackathons, and cultural fests.</p>
-                    </div>
-                    <div className="relative group w-full md:w-80">
-                        <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground group-focus-within:text-indigo-400 transition-colors text-[20px]">search</span>
-                        <Input
-                            className="pl-10 pr-4 py-2 bg-card/50 backdrop-blur-md border-white/10 rounded-xl focus-visible:ring-indigo-500 focus-visible:ring-offset-0 focus-visible:border-indigo-500 text-white placeholder:text-muted-foreground transition-all"
-                            placeholder="Search events, topics..."
-                            type="text"
-                        />
-                    </div>
-                </header>
-
-                {/* Upcoming Events */}
-                <section className="mb-12">
-                    <h2 className="text-xl font-bold text-white mb-6 flex items-center gap-3">
-                        <div className="p-1.5 bg-emerald-500/20 rounded-lg text-emerald-400 border border-emerald-500/20">
-                            <span className="material-symbols-outlined text-[18px]">upcoming</span>
-                        </div>
-                        Upcoming Events
-                        {upcomingEvents.length > 0 && (
-                            <Badge variant="secondary" className="bg-emerald-500/20 text-emerald-400 border-emerald-500/20 ml-2">{upcomingEvents.length}</Badge>
-                        )}
-                    </h2>
-
-                    {upcomingEvents.length === 0 ? (
-                        <Card className="bg-card/50 backdrop-blur-xl border-white/[0.06] shadow-xl ring-1 ring-white/[0.04]">
-                            <CardContent className="flex flex-col items-center justify-center py-16 text-center">
-                                <span className="material-symbols-outlined text-[48px] text-muted-foreground/50 mb-4">event_busy</span>
-                                <p className="text-muted-foreground font-semibold text-lg mb-1">No upcoming events</p>
-                                <p className="text-muted-foreground/70 text-sm">Check back later for new events!</p>
-                            </CardContent>
-                        </Card>
-                    ) : (
-                        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-                            {upcomingEvents.map((event) => {
-                                const style = getCategoryStyle(event.category);
-                                const date = formatDate(event.date);
-                                const spotsLeft = event.capacity - (event.registrationCount || 0);
-                                return (
-                                    <Card key={event.id} className="bg-card/50 backdrop-blur-2xl border-white/[0.06] shadow-2xl shadow-black/20 overflow-hidden group hover:-translate-y-1.5 hover:shadow-[0_30px_60px_-10px_rgba(99,102,241,0.15)] transition-all duration-500 ring-1 ring-white/[0.04]">
-                                        {/* Image/Icon Area */}
-                                        <div className={`h-40 ${style.bg} flex items-center justify-center relative overflow-hidden`}>
-                                            <span className={`material-symbols-outlined text-[64px] ${style.color} opacity-40 group-hover:opacity-70 transition-opacity duration-500 group-hover:scale-110`}>{style.icon}</span>
-                                            <div className="absolute top-3 left-3">
-                                                <Badge className={`${style.bg} ${style.color} ${style.border} border font-bold text-xs uppercase tracking-wider`}>{event.category || "Event"}</Badge>
-                                            </div>
-                                            <div className="absolute top-3 right-3">
-                                                <Badge className="bg-emerald-500/20 text-emerald-400 border border-emerald-500/20 font-bold text-xs">{event.status}</Badge>
-                                            </div>
-                                        </div>
-                                        <CardContent className="p-5">
-                                            <div className="flex gap-4 mb-4">
-                                                <div className={`flex flex-col items-center justify-center w-14 h-14 ${style.bg} rounded-xl ${style.border} border ${style.color} shrink-0`}>
-                                                    <span className="text-[10px] font-extrabold">{date.month}</span>
-                                                    <span className="text-xl font-black">{date.day}</span>
-                                                </div>
-                                                <div className="min-w-0">
-                                                    <h3 className="font-bold text-white text-lg leading-tight mb-1 line-clamp-2 group-hover:text-indigo-400 transition-colors">{event.title}</h3>
-                                                    <p className="text-xs text-muted-foreground font-medium flex items-center gap-1">
-                                                        <span className="material-symbols-outlined text-[14px]">location_on</span> {event.location}
-                                                    </p>
-                                                </div>
-                                            </div>
-                                            <p className="text-sm text-muted-foreground line-clamp-2 mb-5">{event.description}</p>
-                                            <div className="flex items-center justify-between">
-                                                <div className="text-xs text-muted-foreground">
-                                                    <span className="font-bold text-white">{event.registrationCount}</span>/{event.capacity} registered
-                                                    {spotsLeft <= 10 && spotsLeft > 0 && (
-                                                        <span className="text-amber-400 ml-2 font-semibold">• {spotsLeft} spots left!</span>
-                                                    )}
-                                                    {spotsLeft <= 0 && (
-                                                        <span className="text-red-400 ml-2 font-semibold">• Full</span>
-                                                    )}
-                                                </div>
-                                                <Link href={`/events/${event.id}`}>
-                                                    <Button size="sm" className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white rounded-xl shadow-lg shadow-indigo-500/20 font-bold text-xs border border-white/10 hover:-translate-y-0.5 transition-all duration-300">
-                                                        Book Now
-                                                    </Button>
-                                                </Link>
-                                            </div>
-                                        </CardContent>
-                                    </Card>
-                                );
-                            })}
-                        </div>
-                    )}
-                </section>
-
-                {/* Past Events */}
-                {pastEvents.length > 0 && (
-                    <section className="mb-12">
-                        <h2 className="text-xl font-bold text-white mb-6 flex items-center gap-3">
-                            <div className="p-1.5 bg-muted rounded-lg text-muted-foreground border border-white/[0.06]">
-                                <span className="material-symbols-outlined text-[18px]">history</span>
+                <PageTransition>
+                    <FadeIn direction="down">
+                        <header className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-6">
+                            <div>
+                                <h1 className="text-3xl font-extrabold text-white mb-2 tracking-tight">Discover Events</h1>
+                                <p className="text-muted-foreground font-medium text-sm">Explore the best workshops, hackathons, and cultural fests.</p>
                             </div>
-                            Past Events
-                            <Badge variant="secondary" className="bg-white/5 text-muted-foreground border-white/10 ml-2">{pastEvents.length}</Badge>
-                        </h2>
-                        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-                            {pastEvents.map((event) => {
-                                const style = getCategoryStyle(event.category);
-                                const date = formatDate(event.date);
-                                return (
-                                    <Card key={event.id} className="bg-card/30 backdrop-blur-xl border-white/[0.04] shadow-xl overflow-hidden opacity-70 hover:opacity-100 transition-all duration-500 ring-1 ring-white/[0.02]">
-                                        <div className={`h-32 ${style.bg} flex items-center justify-center relative overflow-hidden opacity-50`}>
-                                            <span className={`material-symbols-outlined text-[48px] ${style.color} opacity-30`}>{style.icon}</span>
-                                            <div className="absolute top-3 left-3">
-                                                <Badge className="bg-white/5 text-muted-foreground border border-white/10 font-bold text-xs">{event.category || "Event"}</Badge>
-                                            </div>
-                                            <div className="absolute top-3 right-3">
-                                                <Badge className="bg-white/5 text-muted-foreground border border-white/10 font-bold text-xs">COMPLETED</Badge>
-                                            </div>
-                                        </div>
-                                        <CardContent className="p-5">
-                                            <div className="flex gap-4 mb-3">
-                                                <div className="flex flex-col items-center justify-center w-12 h-12 bg-muted rounded-xl border border-white/[0.06] text-muted-foreground shrink-0">
-                                                    <span className="text-[9px] font-extrabold">{date.month}</span>
-                                                    <span className="text-lg font-black">{date.day}</span>
+                            <div className="relative group w-full md:w-80">
+                                <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground group-focus-within:text-indigo-400 transition-colors text-[20px]">search</span>
+                                <Input
+                                    className="pl-10 pr-4 py-2 bg-card/50 backdrop-blur-md border-white/10 rounded-xl focus-visible:ring-indigo-500 focus-visible:ring-offset-0 focus-visible:border-indigo-500 text-white placeholder:text-muted-foreground transition-all"
+                                    placeholder="Search events, topics..."
+                                    type="text"
+                                />
+                            </div>
+                        </header>
+                    </FadeIn>
+
+                    {/* Upcoming Events */}
+                    <FadeIn direction="up" delay={0.15}>
+                        <section className="mb-12">
+                            <h2 className="text-xl font-bold text-white mb-6 flex items-center gap-3">
+                                <div className="p-1.5 bg-emerald-500/20 rounded-lg text-emerald-400 border border-emerald-500/20">
+                                    <span className="material-symbols-outlined text-[18px]">upcoming</span>
+                                </div>
+                                Upcoming Events
+                                {upcomingEvents.length > 0 && (
+                                    <Badge variant="secondary" className="bg-emerald-500/20 text-emerald-400 border-emerald-500/20 ml-2">{upcomingEvents.length}</Badge>
+                                )}
+                            </h2>
+
+                            {upcomingEvents.length === 0 ? (
+                                <Card className="bg-card/50 backdrop-blur-xl border-white/[0.06] shadow-xl ring-1 ring-white/[0.04]">
+                                    <CardContent className="flex flex-col items-center justify-center py-16 text-center">
+                                        <span className="material-symbols-outlined text-[48px] text-muted-foreground/50 mb-4">event_busy</span>
+                                        <p className="text-muted-foreground font-semibold text-lg mb-1">No upcoming events</p>
+                                        <p className="text-muted-foreground/70 text-sm">Check back later for new events!</p>
+                                    </CardContent>
+                                </Card>
+                            ) : (
+                                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+                                    {upcomingEvents.map((event) => {
+                                        const style = getCategoryStyle(event.category);
+                                        const date = formatDate(event.date);
+                                        const spotsLeft = event.capacity - (event.registrationCount || 0);
+                                        return (
+                                            <Card key={event.id} className="bg-card/50 backdrop-blur-2xl border-white/[0.06] shadow-2xl shadow-black/20 overflow-hidden group hover:-translate-y-1.5 hover:shadow-[0_30px_60px_-10px_rgba(99,102,241,0.15)] transition-all duration-500 ring-1 ring-white/[0.04]">
+                                                {/* Image/Icon Area */}
+                                                <div className={`h-40 ${style.bg} flex items-center justify-center relative overflow-hidden`}>
+                                                    <span className={`material-symbols-outlined text-[64px] ${style.color} opacity-40 group-hover:opacity-70 transition-opacity duration-500 group-hover:scale-110`}>{style.icon}</span>
+                                                    <div className="absolute top-3 left-3">
+                                                        <Badge className={`${style.bg} ${style.color} ${style.border} border font-bold text-xs uppercase tracking-wider`}>{event.category || "Event"}</Badge>
+                                                    </div>
+                                                    <div className="absolute top-3 right-3">
+                                                        <Badge className="bg-emerald-500/20 text-emerald-400 border border-emerald-500/20 font-bold text-xs">{event.status}</Badge>
+                                                    </div>
                                                 </div>
-                                                <div className="min-w-0">
-                                                    <h3 className="font-bold text-white text-base leading-tight mb-1 line-clamp-2">{event.title}</h3>
-                                                    <p className="text-xs text-muted-foreground font-medium flex items-center gap-1">
-                                                        <span className="material-symbols-outlined text-[14px]">location_on</span> {event.location}
-                                                    </p>
+                                                <CardContent className="p-5">
+                                                    <div className="flex gap-4 mb-4">
+                                                        <div className={`flex flex-col items-center justify-center w-14 h-14 ${style.bg} rounded-xl ${style.border} border ${style.color} shrink-0`}>
+                                                            <span className="text-[10px] font-extrabold">{date.month}</span>
+                                                            <span className="text-xl font-black">{date.day}</span>
+                                                        </div>
+                                                        <div className="min-w-0">
+                                                            <h3 className="font-bold text-white text-lg leading-tight mb-1 line-clamp-2 group-hover:text-indigo-400 transition-colors">{event.title}</h3>
+                                                            <p className="text-xs text-muted-foreground font-medium flex items-center gap-1">
+                                                                <span className="material-symbols-outlined text-[14px]">location_on</span> {event.location}
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                    <p className="text-sm text-muted-foreground line-clamp-2 mb-5">{event.description}</p>
+                                                    <div className="flex items-center justify-between">
+                                                        <div className="text-xs text-muted-foreground">
+                                                            <span className="font-bold text-white">{event.registrationCount}</span>/{event.capacity} registered
+                                                            {spotsLeft <= 10 && spotsLeft > 0 && (
+                                                                <span className="text-amber-400 ml-2 font-semibold">• {spotsLeft} spots left!</span>
+                                                            )}
+                                                            {spotsLeft <= 0 && (
+                                                                <span className="text-red-400 ml-2 font-semibold">• Full</span>
+                                                            )}
+                                                        </div>
+                                                        <BookEventModal eventId={event.id} eventTitle={event.title}>
+                                                            <Button size="sm" className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white rounded-xl shadow-lg shadow-indigo-500/20 font-bold text-xs border border-white/10 hover:-translate-y-0.5 transition-all duration-300">
+                                                                Book Now
+                                                            </Button>
+                                                        </BookEventModal>
+                                                    </div>
+                                                </CardContent>
+                                            </Card>
+                                        );
+                                    })}
+                                </div>
+                            )}
+                        </section>
+                    </FadeIn>
+
+                    {/* Past Events */}
+                    {pastEvents.length > 0 && (
+                        <section className="mb-12">
+                            <h2 className="text-xl font-bold text-white mb-6 flex items-center gap-3">
+                                <div className="p-1.5 bg-muted rounded-lg text-muted-foreground border border-white/[0.06]">
+                                    <span className="material-symbols-outlined text-[18px]">history</span>
+                                </div>
+                                Past Events
+                                <Badge variant="secondary" className="bg-white/5 text-muted-foreground border-white/10 ml-2">{pastEvents.length}</Badge>
+                            </h2>
+                            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+                                {pastEvents.map((event) => {
+                                    const style = getCategoryStyle(event.category);
+                                    const date = formatDate(event.date);
+                                    return (
+                                        <Card key={event.id} className="bg-card/30 backdrop-blur-xl border-white/[0.04] shadow-xl overflow-hidden opacity-70 hover:opacity-100 transition-all duration-500 ring-1 ring-white/[0.02]">
+                                            <div className={`h-32 ${style.bg} flex items-center justify-center relative overflow-hidden opacity-50`}>
+                                                <span className={`material-symbols-outlined text-[48px] ${style.color} opacity-30`}>{style.icon}</span>
+                                                <div className="absolute top-3 left-3">
+                                                    <Badge className="bg-white/5 text-muted-foreground border border-white/10 font-bold text-xs">{event.category || "Event"}</Badge>
+                                                </div>
+                                                <div className="absolute top-3 right-3">
+                                                    <Badge className="bg-white/5 text-muted-foreground border border-white/10 font-bold text-xs">COMPLETED</Badge>
                                                 </div>
                                             </div>
-                                            <p className="text-xs text-muted-foreground">{event.registrationCount} attended</p>
-                                        </CardContent>
-                                    </Card>
-                                );
-                            })}
-                        </div>
-                    </section>
-                )}
+                                            <CardContent className="p-5">
+                                                <div className="flex gap-4 mb-3">
+                                                    <div className="flex flex-col items-center justify-center w-12 h-12 bg-muted rounded-xl border border-white/[0.06] text-muted-foreground shrink-0">
+                                                        <span className="text-[9px] font-extrabold">{date.month}</span>
+                                                        <span className="text-lg font-black">{date.day}</span>
+                                                    </div>
+                                                    <div className="min-w-0">
+                                                        <h3 className="font-bold text-white text-base leading-tight mb-1 line-clamp-2">{event.title}</h3>
+                                                        <p className="text-xs text-muted-foreground font-medium flex items-center gap-1">
+                                                            <span className="material-symbols-outlined text-[14px]">location_on</span> {event.location}
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                                <p className="text-xs text-muted-foreground">{event.registrationCount} attended</p>
+                                            </CardContent>
+                                        </Card>
+                                    );
+                                })}
+                            </div>
+                        </section>
+                    )}
+                </PageTransition>
             </main>
         </div>
     );
