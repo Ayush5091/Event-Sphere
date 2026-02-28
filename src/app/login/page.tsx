@@ -24,8 +24,7 @@ export default function LoginPage() {
                 setIsLoading(false);
             }
         } catch {
-            setError("Something went wrong. Please try again.");
-            setIsLoading(false);
+            // Redirect throws are expected from server actions — ignore them
         }
     }
 

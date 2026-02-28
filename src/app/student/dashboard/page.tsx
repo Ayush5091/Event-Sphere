@@ -238,14 +238,14 @@ export default async function StudentDashboard() {
                                                         <span className={`material-symbols-outlined text-[80px] ${cat.color} opacity-30 group-hover:opacity-60 transition-opacity duration-500 group-hover:scale-110`}>{cat.icon}</span>
                                                     )}
                                                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                                                    <div className="absolute top-3 left-3">
-                                                        <Badge className={`${cat.bg} ${cat.color} border ${cat.border} font-bold text-xs uppercase tracking-wider`}>{event.category || "Event"}</Badge>
-                                                    </div>
                                                     <div className="absolute top-3 right-3">
                                                         <Badge className={`${event.status === "UPCOMING" ? "bg-emerald-500/20 text-emerald-400 border-emerald-500/20" : "bg-slate-500/20 text-slate-400 border-slate-500/20"} border font-bold text-xs`}>{event.status}</Badge>
                                                     </div>
                                                 </div>
-                                                <CardContent className="p-6">
+                                                <CardContent className="p-6 relative">
+                                                    <div className="absolute top-4 right-5">
+                                                        <Badge className={`${cat.bg} ${cat.color} border ${cat.border} font-bold text-xs uppercase tracking-wider`}>{event.category || "Event"}</Badge>
+                                                    </div>
                                                     <h3 className="font-bold text-white text-xl mb-2 group-hover:text-indigo-400 transition-colors">{event.title}</h3>
                                                     <p className="text-sm text-muted-foreground line-clamp-2 mb-4">{event.description}</p>
                                                     <div className="flex items-center gap-4 text-sm text-muted-foreground">
@@ -356,11 +356,11 @@ export default async function StudentDashboard() {
                                                         <span className={`material-symbols-outlined text-[48px] ${cat.color} opacity-30 group-hover:opacity-60 transition-opacity duration-500 group-hover:scale-110`}>{cat.icon}</span>
                                                     )}
                                                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                                                    <div className="absolute top-2 left-2">
+                                                </div>
+                                                <CardContent className="p-4 relative">
+                                                    <div className="absolute top-3 right-4">
                                                         <Badge className={`${cat.bg} ${cat.color} border ${cat.border} font-bold text-[10px] uppercase tracking-wider`}>{event.category || "Event"}</Badge>
                                                     </div>
-                                                </div>
-                                                <CardContent className="p-4">
                                                     <div className="flex gap-3 mb-3">
                                                         <div className={`flex flex-col items-center justify-center w-12 h-12 ${cat.bg} rounded-xl ${cat.border} border ${cat.color} shrink-0`}>
                                                             <span className="text-[9px] font-extrabold">{date.month}</span>

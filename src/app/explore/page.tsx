@@ -4,12 +4,11 @@ import Link from "next/link";
 import Image from "next/image";
 import lanyardLogo from "@/components/ui/lanyard.png";
 import { FadeIn, PageTransition } from "@/components/ui/motion";
-import { BookEventModal } from "@/components/BookEventModal";
+import { EventDetailModal } from "@/components/EventDetailModal";
 import {
     Card,
     CardContent,
 } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 
 import { Input } from "@/components/ui/input";
@@ -167,7 +166,8 @@ export default async function ExplorePage() {
                                         const spotsLeft = event.capacity - (event.registrationCount || 0);
                                         const regClosed = event.registrationEndDate ? new Date(event.registrationEndDate) < new Date() : false;
                                         return (
-                                            <Card key={event.id} className="bg-card/50 backdrop-blur-2xl border-white/[0.06] shadow-2xl shadow-black/20 overflow-hidden group hover:-translate-y-1.5 hover:shadow-[0_30px_60px_-10px_rgba(99,102,241,0.15)] transition-all duration-500 ring-1 ring-white/[0.04]">
+                                            <EventDetailModal key={event.id} event={event}>
+                                            <Card className="bg-card/50 backdrop-blur-2xl border-white/[0.06] shadow-2xl shadow-black/20 overflow-hidden group hover:-translate-y-1.5 hover:shadow-[0_30px_60px_-10px_rgba(99,102,241,0.15)] transition-all duration-500 ring-1 ring-white/[0.04] cursor-pointer">
                                                 {/* Image/Icon Area */}
                                                 <div className={`h-40 ${style.bg} flex items-center justify-center relative overflow-hidden`}>
                                                     {event.imageUrl ? (
@@ -181,14 +181,14 @@ export default async function ExplorePage() {
                                                         <span className={`material-symbols-outlined text-[64px] ${style.color} opacity-40 group-hover:opacity-70 transition-opacity duration-500 group-hover:scale-110`}>{style.icon}</span>
                                                     )}
                                                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                                                    <div className="absolute top-3 left-3">
-                                                        <Badge className={`${style.bg} ${style.color} ${style.border} border font-bold text-xs uppercase tracking-wider`}>{event.category || "Event"}</Badge>
-                                                    </div>
                                                     <div className="absolute top-3 right-3">
                                                         <Badge className="bg-emerald-500/20 text-emerald-400 border border-emerald-500/20 font-bold text-xs">UPCOMING</Badge>
                                                     </div>
                                                 </div>
-                                                <CardContent className="p-5">
+                                                <CardContent className="p-5 relative">
+                                                    <div className="absolute top-4 right-5">
+                                                        <Badge className={`${style.bg} ${style.color} ${style.border} border font-bold text-xs uppercase tracking-wider`}>{event.category || "Event"}</Badge>
+                                                    </div>
                                                     <div className="flex gap-4 mb-4">
                                                         <div className={`flex flex-col items-center justify-center w-14 h-14 ${style.bg} rounded-xl ${style.border} border ${style.color} shrink-0`}>
                                                             <span className="text-[10px] font-extrabold">{date.month}</span>
@@ -215,11 +215,7 @@ export default async function ExplorePage() {
                                                         {regClosed ? (
                                                             <Badge className="bg-red-500/15 text-red-400 border border-red-500/20 font-bold text-xs">Registration Closed</Badge>
                                                         ) : (
-                                                            <BookEventModal eventId={event.id} eventTitle={event.title}>
-                                                                <Button size="sm" className="bg-blue-600 hover:bg-blue-500 text-white rounded-xl shadow-lg shadow-blue-500/20 font-bold text-xs border border-white/10 hover:-translate-y-0.5 transition-all duration-300">
-                                                                    Book Now
-                                                                </Button>
-                                                            </BookEventModal>
+                                                            <Badge className="bg-blue-500/15 text-blue-400 border border-blue-500/20 font-bold text-xs">Click for details</Badge>
                                                         )}
                                                     </div>
                                                     {event.registrationEndDate && !regClosed && (
@@ -230,6 +226,7 @@ export default async function ExplorePage() {
                                                     )}
                                                 </CardContent>
                                             </Card>
+                                            </EventDetailModal>
                                         );
                                     })}
                                 </div>
@@ -252,7 +249,8 @@ export default async function ExplorePage() {
                                     const style = getCategoryStyle(event.category);
                                     const date = formatDate(event.date);
                                     return (
-                                        <Card key={event.id} className="bg-card/30 backdrop-blur-xl border-white/[0.04] shadow-xl overflow-hidden opacity-70 hover:opacity-100 transition-all duration-500 ring-1 ring-white/[0.02]">
+                                        <EventDetailModal key={event.id} event={event}>
+                                        <Card className="bg-card/30 backdrop-blur-xl border-white/[0.04] shadow-xl overflow-hidden opacity-70 hover:opacity-100 transition-all duration-500 ring-1 ring-white/[0.02] cursor-pointer">
                                             <div className={`h-32 ${style.bg} flex items-center justify-center relative overflow-hidden opacity-50`}>
                                                 {event.imageUrl ? (
                                                     <Image
@@ -287,6 +285,7 @@ export default async function ExplorePage() {
                                                 <p className="text-xs text-muted-foreground">{event.registrationCount} attended</p>
                                             </CardContent>
                                         </Card>
+                                        </EventDetailModal>
                                     );
                                 })}
                             </div>
