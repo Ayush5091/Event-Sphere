@@ -1,13 +1,8 @@
 import React from 'react'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
-import { InfiniteSlider } from '@/components/ui/infinite-slider'
-import { ProgressiveBlur } from '@/components/ui/progressive-blur'
 import { TextEffect } from "@/components/motion-primitives/text-effect";
 import { AnimatedGroup } from "@/components/motion-primitives/animated-group";
-import V0Icon from "@/components/icons/v0-icon";
-import VercelWordmarkIcon from "@/components/icons/vercel-wordmark-icon";
-import GlobantLogoIcon from "@/components/icons/globant-logo-icon";
 import DecryptedText from "@/components/DecryptedText";
 import { transitionVariants } from "@/lib/utils";
 import LanyardWithControls from "@/components/lanyard-with-controls";
@@ -96,61 +91,6 @@ export default function HeroSection() {
                         containerClassName='lg:absolute lg:top-0 lg:right-0 lg:w-1/2 relative w-full h-screen bg-radial lg:from-transparent lg:to-transparent from-muted to-background select-none'
                         defaultName="EventSphere" />
                 </div>
-            </section>
-            <section className="bg-black pb-16 md:pb-32">
-                <AnimatedGroup
-                    variants={{
-                        container: {
-                            visible: {
-                                transition: {
-                                    staggerChildren: 0.05,
-                                    delayChildren: 0.75,
-                                },
-                            },
-                        },
-                        ...transitionVariants,
-                    }}
-                    className="group relative m-auto max-w-6xl px-6"
-                >
-
-                    <div className="flex flex-col items-center md:flex-row">
-                        <div className="md:max-w-44 md:border-r md:pr-6">
-                            <p className="text-end text-sm font-mono uppercase">Trusted by</p>
-                        </div>
-                        <div className="relative py-6 md:w-[calc(100%-11rem)]">
-                            <InfiniteSlider
-                                speedOnHover={20}
-                                speed={40}
-                                gap={112}>
-                                <div className="flex items-center">
-                                    <V0Icon size={35} aria-label="v0 Logo" className='text-foreground mx-auto' />
-                                </div>
-                                <div className="flex items-center">
-                                    <VercelWordmarkIcon size={20} aria-label="Vercel Logo"
-                                        className='text-foreground mx-auto' />
-                                </div>
-                                <div className="flex items-center">
-                                    <GlobantLogoIcon size={20} aria-label="Globant Logo"
-                                        className='text-foreground mx-auto' />
-                                </div>
-                            </InfiniteSlider>
-                            <div
-                                className="bg-linear-to-r from-background absolute inset-y-0 left-0 w-20"></div>
-                            <div
-                                className="bg-linear-to-l from-background absolute inset-y-0 right-0 w-20"></div>
-                            <ProgressiveBlur
-                                className="pointer-events-none absolute left-0 top-0 h-full w-20"
-                                direction="left"
-                                blurIntensity={1}
-                            />
-                            <ProgressiveBlur
-                                className="pointer-events-none absolute right-0 top-0 h-full w-20"
-                                direction="right"
-                                blurIntensity={1}
-                            />
-                        </div>
-                    </div>
-                </AnimatedGroup>
             </section>
         </main>
     )

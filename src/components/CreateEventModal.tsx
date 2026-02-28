@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import {
     Dialog,
     DialogContent,
@@ -26,6 +27,38 @@ export function CreateEventModal({ children }: { children: React.ReactNode }) {
     const [open, setOpen] = useState(false);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
+    const [imageFile, setImageFile] = useState<File | null>(null);
+    const [imagePreview, setImagePreview] = useState<string | null>(null);
+    const [uploading, setUploading] = useState(false);
+    const fileInputRef = useRef<HTMLInputElement>(null);
+
+    function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        // Validate file type
+        if (!file.type.startsWith("image/")) {
+            setError("Please select an image file (JPG, PNG, GIF, WebP)");
+            return;
+        }
+        // Validate file size (max 5MB)
+        if (file.size > 5 * 1024 * 1024) {
+            setError("Image must be smaller than 5MB");
+            return;
+        }
+
+        setError("");
+        setImageFile(file);
+        const reader = new FileReader();
+        reader.onloadend = () => setImagePreview(reader.result as string);
+        reader.readAsDataURL(file);
+    }
+
+    function removeImage() {
+        setImageFile(null);
+        setImagePreview(null);
+        if (fileInputRef.current) fileInputRef.current.value = "";
+    }
 
     async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault();
@@ -33,6 +66,33 @@ export function CreateEventModal({ children }: { children: React.ReactNode }) {
         setError("");
 
         const form = new FormData(e.currentTarget);
+
+        let imageUrl = "";
+
+        // Upload image to S3 if one was selected
+        if (imageFile) {
+            try {
+                setUploading(true);
+                const uploadForm = new FormData();
+                uploadForm.append("file", imageFile);
+
+                const uploadRes = await fetch("/api/upload", {
+                    method: "POST",
+                    body: uploadForm,
+                });
+                const uploadData = await uploadRes.json();
+                if (!uploadRes.ok) throw new Error(uploadData.error || "Failed to upload image");
+                imageUrl = uploadData.url;
+            } catch (err: unknown) {
+                setError(err instanceof Error ? err.message : "Failed to upload image");
+                setLoading(false);
+                setUploading(false);
+                return;
+            } finally {
+                setUploading(false);
+            }
+        }
+
         const body = {
             title: form.get("title") as string,
             description: form.get("description") as string,
@@ -41,7 +101,7 @@ export function CreateEventModal({ children }: { children: React.ReactNode }) {
             capacity: form.get("capacity") as string,
             category: form.get("category") as string,
             organizer: form.get("organizer") as string,
-            imageUrl: form.get("imageUrl") as string,
+            imageUrl,
         };
 
         try {
@@ -53,6 +113,8 @@ export function CreateEventModal({ children }: { children: React.ReactNode }) {
             const data = await res.json();
             if (!data.success) throw new Error(data.message);
             setOpen(false);
+            setImageFile(null);
+            setImagePreview(null);
             router.refresh();
         } catch (err: unknown) {
             setError(err instanceof Error ? err.message : "Failed to create event");
@@ -117,8 +179,45 @@ export function CreateEventModal({ children }: { children: React.ReactNode }) {
                         </div>
                     </div>
                     <div className="space-y-2">
-                        <Label htmlFor="imageUrl" className="text-sm font-semibold text-slate-300">Banner Image URL (Optional)</Label>
-                        <Input id="imageUrl" name="imageUrl" placeholder="https://images.unsplash.com/photo..." className="bg-white/5 border-white/10 text-white placeholder:text-muted-foreground focus-visible:ring-indigo-500" />
+                        <Label className="text-sm font-semibold text-slate-300">Banner Image (Optional)</Label>
+                        {imagePreview ? (
+                            <div className="relative rounded-xl overflow-hidden border border-white/10 group">
+                                <Image
+                                    src={imagePreview}
+                                    alt="Banner preview"
+                                    width={480}
+                                    height={160}
+                                    className="w-full h-36 object-cover"
+                                />
+                                <button
+                                    type="button"
+                                    onClick={removeImage}
+                                    className="absolute top-2 right-2 p-1.5 bg-black/70 hover:bg-red-600 rounded-lg text-white transition-colors border border-white/10"
+                                >
+                                    <span className="material-symbols-outlined text-[16px]">close</span>
+                                </button>
+                                <div className="absolute bottom-2 left-2 bg-black/60 backdrop-blur-sm rounded-lg px-2 py-1">
+                                    <p className="text-xs text-white/80 truncate max-w-[200px]">{imageFile?.name}</p>
+                                </div>
+                            </div>
+                        ) : (
+                            <button
+                                type="button"
+                                onClick={() => fileInputRef.current?.click()}
+                                className="w-full h-28 border-2 border-dashed border-white/10 hover:border-indigo-500/50 rounded-xl flex flex-col items-center justify-center gap-2 transition-colors bg-white/[0.02] hover:bg-indigo-500/5 cursor-pointer group"
+                            >
+                                <span className="material-symbols-outlined text-[28px] text-muted-foreground group-hover:text-indigo-400 transition-colors">cloud_upload</span>
+                                <span className="text-xs text-muted-foreground group-hover:text-indigo-400 transition-colors font-medium">Click to upload banner image</span>
+                                <span className="text-[10px] text-muted-foreground/60">JPG, PNG, GIF, WebP — Max 5MB</span>
+                            </button>
+                        )}
+                        <input
+                            ref={fileInputRef}
+                            type="file"
+                            accept="image/*"
+                            onChange={handleFileChange}
+                            className="hidden"
+                        />
                     </div>
                     {error && (
                         <p className="text-red-400 text-sm font-medium bg-red-500/10 border border-red-500/20 rounded-lg px-3 py-2">{error}</p>
@@ -127,11 +226,11 @@ export function CreateEventModal({ children }: { children: React.ReactNode }) {
                         <Button type="button" variant="ghost" onClick={() => setOpen(false)} className="text-muted-foreground hover:text-white hover:bg-white/5">
                             Cancel
                         </Button>
-                        <Button type="submit" disabled={loading} className="bg-blue-600 hover:bg-blue-500 text-white font-bold shadow-lg shadow-blue-500/30 border border-white/10">
+                        <Button type="submit" disabled={loading || uploading} className="bg-blue-600 hover:bg-blue-500 text-white font-bold shadow-lg shadow-blue-500/30 border border-white/10">
                             {loading ? (
                                 <span className="flex items-center gap-2">
                                     <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                                    Creating...
+                                    {uploading ? "Uploading image..." : "Creating..."}
                                 </span>
                             ) : "Create Event"}
                         </Button>

@@ -21,15 +21,12 @@ export async function POST(req: NextRequest) {
             Key: fileName,
             Body: buffer,
             ContentType: file.type,
-            // Note: ACL 'public-read' requires the bucket to allow public ACLs.
-            // Alternatively, omit ACL and use a Bucket Policy for public read access.
-            // ACL: 'public-read', 
         });
 
         await s3Client.send(command);
 
-        // Construct the public URL (assuming the bucket is public)
-        const imageUrl = `https://${process.env.AWS_S3_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com/${fileName}`;
+        // Serve images through our proxy API route (no public bucket needed)
+        const imageUrl = `/api/images/${fileName}`;
 
         return NextResponse.json({ url: imageUrl }, { status: 200 });
     } catch (error) {
