@@ -101,6 +101,7 @@ export function CreateEventModal({ children }: { children: React.ReactNode }) {
             capacity: form.get("capacity") as string,
             category: form.get("category") as string,
             organizer: form.get("organizer") as string,
+            registrationEndDate: form.get("registrationEndDate") as string || "",
             imageUrl,
         };
 
@@ -153,6 +154,11 @@ export function CreateEventModal({ children }: { children: React.ReactNode }) {
                             <Label htmlFor="capacity" className="text-sm font-semibold text-slate-300">Capacity</Label>
                             <Input id="capacity" name="capacity" type="number" min={1} required placeholder="100" className="bg-white/5 border-white/10 text-white placeholder:text-muted-foreground focus-visible:ring-indigo-500" />
                         </div>
+                    </div>
+                    <div className="space-y-2">
+                        <Label htmlFor="registrationEndDate" className="text-sm font-semibold text-slate-300">Registration Deadline <span className="text-muted-foreground font-normal">(Optional)</span></Label>
+                        <Input id="registrationEndDate" name="registrationEndDate" type="datetime-local" className="bg-white/5 border-white/10 text-white focus-visible:ring-indigo-500" />
+                        <p className="text-[11px] text-muted-foreground/70">After this date, students won&apos;t be able to register for the event.</p>
                     </div>
                     <div className="space-y-2">
                         <Label htmlFor="location" className="text-sm font-semibold text-slate-300">Location</Label>

@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import Link from "next/link";
 import Image from "next/image";
 import lanyardLogo from "@/components/ui/lanyard.png";
@@ -199,6 +201,7 @@ export default async function ManageEventsPage() {
                                                 <TableHead className="font-bold text-muted-foreground uppercase tracking-wider text-xs py-4">Event</TableHead>
                                                 <TableHead className="font-bold text-muted-foreground uppercase tracking-wider text-xs py-4">Category</TableHead>
                                                 <TableHead className="font-bold text-muted-foreground uppercase tracking-wider text-xs py-4">Date</TableHead>
+                                                <TableHead className="font-bold text-muted-foreground uppercase tracking-wider text-xs py-4">Reg. Deadline</TableHead>
                                                 <TableHead className="font-bold text-muted-foreground uppercase tracking-wider text-xs py-4">Location</TableHead>
                                                 <TableHead className="font-bold text-muted-foreground uppercase tracking-wider text-xs py-4">Registrations</TableHead>
                                                 <TableHead className="font-bold text-muted-foreground uppercase tracking-wider text-xs py-4">Status</TableHead>
@@ -226,6 +229,18 @@ export default async function ManageEventsPage() {
                                                                 <p className="text-white font-medium text-sm">{formatDate(event.date)}</p>
                                                                 <p className="text-xs text-muted-foreground">{formatTime(event.date)}</p>
                                                             </div>
+                                                        </TableCell>
+                                                        <TableCell className="py-4">
+                                                            {event.registrationEndDate ? (
+                                                                <div>
+                                                                    <p className="text-white font-medium text-sm">{formatDate(event.registrationEndDate)}</p>
+                                                                    <p className={`text-xs ${new Date(event.registrationEndDate) < new Date() ? 'text-red-400' : 'text-muted-foreground'}`}>
+                                                                        {new Date(event.registrationEndDate) < new Date() ? 'Closed' : formatTime(event.registrationEndDate)}
+                                                                    </p>
+                                                                </div>
+                                                            ) : (
+                                                                <span className="text-muted-foreground/50 text-xs">No deadline</span>
+                                                            )}
                                                         </TableCell>
                                                         <TableCell className="py-4 text-slate-300 text-sm">{event.location}</TableCell>
                                                         <TableCell className="py-4">

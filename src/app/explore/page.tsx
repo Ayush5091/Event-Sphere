@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import Link from "next/link";
 import Image from "next/image";
 import lanyardLogo from "@/components/ui/lanyard.png";
@@ -47,6 +49,7 @@ interface Event {
     category: string | null;
     organizer: string;
     status: string;
+    registrationEndDate: string | null;
     registrationCount?: number;
 }
 
@@ -162,6 +165,7 @@ export default async function ExplorePage() {
                                         const style = getCategoryStyle(event.category);
                                         const date = formatDate(event.date);
                                         const spotsLeft = event.capacity - (event.registrationCount || 0);
+                                        const regClosed = event.registrationEndDate ? new Date(event.registrationEndDate) < new Date() : false;
                                         return (
                                             <Card key={event.id} className="bg-card/50 backdrop-blur-2xl border-white/[0.06] shadow-2xl shadow-black/20 overflow-hidden group hover:-translate-y-1.5 hover:shadow-[0_30px_60px_-10px_rgba(99,102,241,0.15)] transition-all duration-500 ring-1 ring-white/[0.04]">
                                                 {/* Image/Icon Area */}
@@ -208,12 +212,22 @@ export default async function ExplorePage() {
                                                                 <span className="text-red-400 ml-2 font-semibold">• Full</span>
                                                             )}
                                                         </div>
-                                                        <BookEventModal eventId={event.id} eventTitle={event.title}>
-                                                            <Button size="sm" className="bg-blue-600 hover:bg-blue-500 text-white rounded-xl shadow-lg shadow-blue-500/20 font-bold text-xs border border-white/10 hover:-translate-y-0.5 transition-all duration-300">
-                                                                Book Now
-                                                            </Button>
-                                                        </BookEventModal>
+                                                        {regClosed ? (
+                                                            <Badge className="bg-red-500/15 text-red-400 border border-red-500/20 font-bold text-xs">Registration Closed</Badge>
+                                                        ) : (
+                                                            <BookEventModal eventId={event.id} eventTitle={event.title}>
+                                                                <Button size="sm" className="bg-blue-600 hover:bg-blue-500 text-white rounded-xl shadow-lg shadow-blue-500/20 font-bold text-xs border border-white/10 hover:-translate-y-0.5 transition-all duration-300">
+                                                                    Book Now
+                                                                </Button>
+                                                            </BookEventModal>
+                                                        )}
                                                     </div>
+                                                    {event.registrationEndDate && !regClosed && (
+                                                        <p className="text-[11px] text-amber-400/80 mt-2 flex items-center gap-1">
+                                                            <span className="material-symbols-outlined text-[13px]">schedule</span>
+                                                            Register by {new Date(event.registrationEndDate).toLocaleDateString("en-US", { month: "short", day: "numeric" })} at {new Date(event.registrationEndDate).toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit", hour12: true })}
+                                                        </p>
+                                                    )}
                                                 </CardContent>
                                             </Card>
                                         );

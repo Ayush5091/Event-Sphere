@@ -4,7 +4,7 @@ import { supabase } from '@/lib/supabase';
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { title, description, date, location, capacity, category, organizer, imageUrl } = body;
+    const { title, description, date, location, capacity, category, organizer, imageUrl, registrationEndDate } = body;
 
     if (!title || !description || !date || !location || !capacity || !organizer) {
       return NextResponse.json(
@@ -25,7 +25,8 @@ export async function POST(request: Request) {
           category: category || 'Technical',
           organizer,
           imageUrl: imageUrl || null,
-          status: 'UPCOMING'
+          status: 'UPCOMING',
+          registrationEndDate: registrationEndDate ? new Date(registrationEndDate).toISOString() : null,
         }
       ])
       .select()

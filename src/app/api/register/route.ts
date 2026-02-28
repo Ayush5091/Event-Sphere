@@ -27,10 +27,10 @@ export async function POST(request: Request) {
     const studentEmail = user.email || 'Unknown';
     const studentId = profile?.department || 'N/A';
 
-    // Check if event exists and get capacity
+    // Check if event exists and get capacity + registration deadline
     const { data: event, error: eventError } = await supabase
       .from('Event')
-      .select('capacity')
+      .select('capacity, registrationEndDate')
       .eq('id', eventId)
       .single();
 
@@ -38,6 +38,14 @@ export async function POST(request: Request) {
       return NextResponse.json(
         { success: false, message: 'Event not found' },
         { status: 404 }
+      );
+    }
+
+    // Check if registration deadline has passed
+    if (event.registrationEndDate && new Date(event.registrationEndDate) < new Date()) {
+      return NextResponse.json(
+        { success: false, message: 'Registration deadline has passed' },
+        { status: 400 }
       );
     }
 

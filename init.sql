@@ -12,7 +12,8 @@ CREATE TABLE "Event" (
   "imageUrl" TEXT,          -- For AWS S3 URLs
   "category" TEXT,          -- e.g., 'Technical', 'Sports'
   "organizer" TEXT NOT NULL,-- e.g., 'Computer Science Dept'
-  "status" TEXT NOT NULL DEFAULT 'UPCOMING', 
+  "status" TEXT NOT NULL DEFAULT 'UPCOMING',
+  "registrationEndDate" TIMESTAMP(3), -- Registration deadline 
   
   "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
   "updatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP
@@ -21,6 +22,7 @@ CREATE TABLE "Event" (
 CREATE TABLE "Registration" (
   "id" UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   "eventId" UUID NOT NULL REFERENCES "Event"("id") ON DELETE CASCADE,
+  "user_id" UUID,           -- Supabase auth user ID
   "studentName" TEXT NOT NULL,
   "studentEmail" TEXT NOT NULL,
   "studentId" TEXT NOT NULL,
