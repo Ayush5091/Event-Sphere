@@ -10,8 +10,7 @@ import {
     DialogTrigger,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+
 
 interface BookEventModalProps {
     eventId: string;
@@ -31,7 +30,7 @@ export function BookEventModal({ eventId, eventTitle, children }: BookEventModal
         setLoading(true);
         setError("");
 
-        const form = new FormData(e.currentTarget);
+        new FormData(e.currentTarget);
         const body = {
             eventId,
         };

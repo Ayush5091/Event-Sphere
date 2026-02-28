@@ -23,8 +23,8 @@ export async function GET() {
         }
 
         return NextResponse.json({ success: true, data: profile });
-    } catch (error: any) {
-        console.error(`[Error fetching profile]: ${error.message}`);
+    } catch (error: unknown) {
+        console.error(`[Error fetching profile]: ${error instanceof Error ? error.message : error}`);
         return NextResponse.json(
             { success: false, message: 'Internal Server Error' },
             { status: 500 }
@@ -62,8 +62,8 @@ export async function PUT(request: Request) {
         }
 
         return NextResponse.json({ success: true, data: profile });
-    } catch (error: any) {
-        console.error(`[Error updating profile]: ${error.message}`);
+    } catch (error: unknown) {
+        console.error(`[Error updating profile]: ${error instanceof Error ? error.message : error}`);
         return NextResponse.json(
             { success: false, message: 'Internal Server Error' },
             { status: 500 }

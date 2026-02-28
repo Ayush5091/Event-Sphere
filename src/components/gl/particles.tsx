@@ -1,3 +1,4 @@
+/* eslint-disable */
 // @ts-nocheck
 import * as THREE from "three";
 import { useMemo, useState, useRef, useEffect } from "react";

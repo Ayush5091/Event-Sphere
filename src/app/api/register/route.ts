@@ -82,8 +82,8 @@ export async function POST(request: Request) {
     if (insertError) throw insertError;
 
     return NextResponse.json({ success: true, data: registration }, { status: 201 });
-  } catch (error: any) {
-    console.error(`[Error]: ${error.message}`);
+  } catch (error: unknown) {
+    console.error(`[Error]: ${error instanceof Error ? error.message : error}`);
     return NextResponse.json(
       { success: false, message: 'Internal Server Error' },
       { status: 500 }

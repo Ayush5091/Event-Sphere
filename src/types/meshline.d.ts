@@ -1,6 +1,6 @@
 declare namespace JSX {
     interface IntrinsicElements {
-        meshLineGeometry: any;
-        meshLineMaterial: any;
+        meshLineGeometry: Record<string, unknown>;
+        meshLineMaterial: Record<string, unknown>;
     }
 }

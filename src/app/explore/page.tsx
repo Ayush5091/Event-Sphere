@@ -3,7 +3,7 @@ export const dynamic = "force-dynamic";
 import Link from "next/link";
 import Image from "next/image";
 import lanyardLogo from "@/components/ui/lanyard.png";
-import { FadeIn, PageTransition, StaggerContainer, StaggerItem } from "@/components/ui/motion";
+import { FadeIn, PageTransition } from "@/components/ui/motion";
 import { BookEventModal } from "@/components/BookEventModal";
 import {
     Card,
@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+
 import { Input } from "@/components/ui/input";
 import { SignOutButton } from "@/components/SignOutButton";
 import { createClient } from "@/lib/supabase/server";
@@ -60,7 +60,7 @@ export default async function ExplorePage() {
     const userEmail = user?.email || "";
 
     // Fetch events from Supabase
-    const { data: events, error } = await supabaseAdmin
+    const { data: events } = await supabaseAdmin
         .from("Event")
         .select("*")
         .order("date", { ascending: true });

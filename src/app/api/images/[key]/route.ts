@@ -29,9 +29,9 @@ export async function GET(
                 'Cache-Control': 'public, max-age=31536000, immutable',
             },
         });
-    } catch (error: any) {
+    } catch (error: unknown) {
         console.error('Error fetching image from S3:', error);
-        if (error.name === 'NoSuchKey') {
+        if (error instanceof Error && error.name === 'NoSuchKey') {
             return NextResponse.json({ error: 'Image not found' }, { status: 404 });
         }
         return NextResponse.json({ error: 'Failed to fetch image' }, { status: 500 });

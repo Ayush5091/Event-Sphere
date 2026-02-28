@@ -195,7 +195,7 @@ export default function LoginPage() {
                             {isLogin && (
                                 <div className="mt-8 text-center">
                                     <p className="text-zinc-400 text-sm">
-                                        Don't have an account?
+                                        Don&apos;t have an account?
                                         <button
                                             onClick={() => {
                                                 setIsLogin(false);

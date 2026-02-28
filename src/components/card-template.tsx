@@ -20,7 +20,7 @@ export interface CardTemplateRef {
 const CANVAS_SIZE = 1376;
 
 const CardTemplate = forwardRef<CardTemplateRef, CardTemplateProps>(
-  ({ userName, variant, onTextureReady, city, date }, ref) => {
+  ({ userName, variant, onTextureReady, date }, ref) => {
     const [baseImage, setBaseImage] = useState<HTMLImageElement | null>(null);
     const [logoImage, setLogoImage] = useState<HTMLImageElement | null>(null);
 
