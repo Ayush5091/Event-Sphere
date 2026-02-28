@@ -16,10 +16,15 @@ export default function LoginPage() {
         setError(null);
         setIsLoading(true);
 
-        const result = isLogin ? await login(formData) : await signup(formData);
+        try {
+            const result = isLogin ? await login(formData) : await signup(formData);
 
-        if (result?.error) {
-            setError(result.error);
+            if (result?.error) {
+                setError(result.error);
+                setIsLoading(false);
+            }
+        } catch {
+            setError("Something went wrong. Please try again.");
             setIsLoading(false);
         }
     }
